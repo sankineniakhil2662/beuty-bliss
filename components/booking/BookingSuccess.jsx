@@ -1,0 +1,46 @@
+"use client";
+
+// Step 5: confirmation screen. Ref number is generated client-side for now;
+// the real ref will come from the Firestore write next phase.
+export default function BookingSuccess({ firstName, email, bookingRef, onBackHome }) {
+  return (
+    <div className="success-box">
+      <div className="circle">✓</div>
+      <h2>Request received!</h2>
+      <p>
+        Thank you, <b>{firstName}</b>. Your appointment request has been sent to
+        Sruthi.
+      </p>
+      <div className="ref">
+        Booking Ref: <b>{bookingRef}</b>
+      </div>
+      <div className="next-steps">
+        <div className="nh">What happens next</div>
+        <div className="ns">
+          <div className="num">1</div>
+          <div>
+            <b>We&apos;ll reach out</b>Sruthi will call or message you within 24
+            hours to confirm your time.
+          </div>
+        </div>
+        <div className="ns">
+          <div className="num">2</div>
+          <div>
+            <b>Check your inbox</b>A confirmation email is on its way to{" "}
+            <span>{email}</span>.
+          </div>
+        </div>
+        <div className="ns">
+          <div className="num">3</div>
+          <div>
+            <b>Pay after your visit</b>No payment now — settle in person once your
+            treatment is done.
+          </div>
+        </div>
+      </div>
+      <button className="btn-gold" style={{ marginTop: 24 }} onClick={onBackHome}>
+        Back to Home
+      </button>
+    </div>
+  );
+}
