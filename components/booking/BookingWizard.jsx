@@ -52,6 +52,8 @@ export default function BookingWizard({ services }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [agree, setAgree] = useState(false);
   const [bookingRef, setBookingRef] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   // validation display flags
   const [showSvcErr, setShowSvcErr] = useState(false);
@@ -131,15 +133,45 @@ export default function BookingWizard({ services }) {
     setStep(4);
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!agree) {
       setShowAgreeErr(true);
       return;
     }
     setShowAgreeErr(false);
-    // Placeholder ref until the Firestore write returns a real one (next phase).
-    setBookingRef("#BB-2026-" + String(Math.floor(1000 + Math.random() * 9000)));
-    setStep(5);
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      const preferredDate = `2026-07-${String(selectedDate).padStart(2, "0")}`;
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          services: lines.map((l) => ({
+            name: l.name,
+            price: l.price,
+            qty: l.qty,
+          })),
+          total,
+          details,
+          consultation,
+          preferredDate,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Request failed");
+      }
+      const { ref } = await res.json();
+      setBookingRef(ref);
+      setStep(5);
+    } catch (err) {
+      setSubmitError(
+        err.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const firstName = details.name.trim().split(" ")[0] || "there";
@@ -211,6 +243,8 @@ export default function BookingWizard({ services }) {
               agree={agree}
               onAgreeChange={setAgree}
               showError={showAgreeErr}
+              submitting={submitting}
+              submitError={submitError}
               onBack={() => setStep(3)}
               onSubmit={submit}
             />

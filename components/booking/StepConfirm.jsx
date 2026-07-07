@@ -12,6 +12,8 @@ export default function StepConfirm({
   agree,
   onAgreeChange,
   showError,
+  submitting,
+  submitError,
   onBack,
   onSubmit,
 }) {
@@ -117,12 +119,14 @@ export default function StepConfirm({
         </div>
       )}
 
+      {submitError && <div className="banner err">⚠ {submitError}</div>}
+
       <div className="form-actions">
-        <button className="btn-prev" onClick={onBack}>
+        <button className="btn-prev" onClick={onBack} disabled={submitting}>
           ← Back
         </button>
-        <button className="btn-next" onClick={onSubmit}>
-          Send Request
+        <button className="btn-next" onClick={onSubmit} disabled={submitting}>
+          {submitting ? "Sending…" : "Send Request"}
         </button>
       </div>
     </div>

@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Services: publicly readable so the site can list them.
+    // Writes are admin-only. To seed, temporarily allow write here (or use the
+    // Admin SDK) — see scripts/seed-services.mjs.
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Bookings: anyone can submit a request from the public booking form.
+    // Reading/updating/deleting is admin-only (wired in the admin phase).
+    match /bookings/{bookingId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+  }
+}
