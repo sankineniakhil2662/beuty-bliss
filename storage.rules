@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Public review-photo uploads, constrained to small images. Read is public
+    // so approved reviews can show the photos. (The upload path includes the
+    // one-time review token; the review itself is still admin-moderated.)
+    match /review-uploads/{token}/{fileName} {
+      allow read: if true;
+      allow write: if request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Everything else is locked down.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

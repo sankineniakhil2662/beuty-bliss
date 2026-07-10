@@ -6,7 +6,12 @@ import BookingTable from "./BookingTable";
 import TabPills from "./TabPills";
 import Banner from "./Banner";
 import EmptyState from "./EmptyState";
-import { fetchAllBookings, updateBookingStatus } from "@/lib/bookings";
+import {
+  completeBookingAndMakeToken,
+  fetchAllBookings,
+  regenerateReviewToken,
+  updateBookingStatus,
+} from "@/lib/bookings";
 
 const TABS = [
   { key: "all", label: "All" },
@@ -48,7 +53,39 @@ export default function BookingsView() {
       .finally(() => setLoading(false));
   }, []);
 
+  const reviewLink = (raw) =>
+    `${typeof window !== "undefined" ? window.location.origin : ""}/review/${raw}`;
+
   const handleAction = async (booking, actionLabel) => {
+    // Completing a booking also mints a one-time review link.
+    if (actionLabel === "Mark done") {
+      const prevStatus = booking.status;
+      setBookings((prev) =>
+        prev.map((b) => (b.id === booking.id ? { ...b, status: "completed" } : b))
+      );
+      try {
+        const raw = await completeBookingAndMakeToken(booking.id);
+        setBanner(`${booking.name} completed. Review link: ${reviewLink(raw)}`);
+      } catch {
+        setBookings((prev) =>
+          prev.map((b) => (b.id === booking.id ? { ...b, status: prevStatus } : b))
+        );
+        setBanner("Update failed — please try again.");
+      }
+      return;
+    }
+
+    // Re-issue a fresh review link for a completed booking.
+    if (actionLabel === "Resend review link") {
+      try {
+        const raw = await regenerateReviewToken(booking.id);
+        setBanner(`New review link for ${booking.name}: ${reviewLink(raw)}`);
+      } catch {
+        setBanner("Couldn't create a link — please try again.");
+      }
+      return;
+    }
+
     const nextStatus = NEXT_STATUS[actionLabel];
     if (nextStatus) {
       const prevStatus = booking.status;
