@@ -1,4 +1,5 @@
 import { createBooking } from "@/lib/bookings";
+import { sendSms } from "@/lib/notify";
 
 // POST /api/bookings — create a booking request. Returns { id, ref }.
 export async function POST(request) {
@@ -24,6 +25,18 @@ export async function POST(request) {
 
   try {
     const result = await createBooking(body);
+
+    // Best-effort: text Sruthi about the new request (never blocks the booking).
+    try {
+      const svc = services.map((s) => s.name).join(", ");
+      await sendSms(
+        process.env.ADMIN_PHONE,
+        `New Beauty Bliss request: ${details.name} — ${svc} on ${preferredDate}. Ref ${result.ref}`
+      );
+    } catch (smsErr) {
+      console.error("admin SMS failed:", smsErr);
+    }
+
     return Response.json(result, { status: 201 });
   } catch (err) {
     console.error("POST /api/bookings failed:", err);

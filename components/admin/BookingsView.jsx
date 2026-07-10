@@ -9,6 +9,7 @@ import EmptyState from "./EmptyState";
 import {
   completeBookingAndMakeToken,
   fetchAllBookings,
+  notifyBooking,
   regenerateReviewToken,
   updateBookingStatus,
 } from "@/lib/bookings";
@@ -29,6 +30,13 @@ const NEXT_STATUS = {
   "Mark done": "completed",
   Cancel: "cancelled",
   Reopen: "requested",
+};
+
+// Which status actions text the customer (Reopen doesn't).
+const NOTIFY_EVENT = {
+  Confirm: "confirmed",
+  Decline: "cancelled",
+  Cancel: "cancelled",
 };
 
 const ACTION_MESSAGE = {
@@ -66,6 +74,7 @@ export default function BookingsView() {
       try {
         const raw = await completeBookingAndMakeToken(booking.id);
         setBanner(`${booking.name} completed. Review link: ${reviewLink(raw)}`);
+        notifyBooking(booking.id, "completed", reviewLink(raw));
       } catch {
         setBookings((prev) =>
           prev.map((b) => (b.id === booking.id ? { ...b, status: prevStatus } : b))
@@ -80,6 +89,7 @@ export default function BookingsView() {
       try {
         const raw = await regenerateReviewToken(booking.id);
         setBanner(`New review link for ${booking.name}: ${reviewLink(raw)}`);
+        notifyBooking(booking.id, "completed", reviewLink(raw));
       } catch {
         setBanner("Couldn't create a link — please try again.");
       }
@@ -95,6 +105,8 @@ export default function BookingsView() {
       );
       try {
         await updateBookingStatus(booking.id, nextStatus);
+        const evt = NOTIFY_EVENT[actionLabel];
+        if (evt) notifyBooking(booking.id, evt);
       } catch {
         // revert on failure
         setBookings((prev) =>
