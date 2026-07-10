@@ -30,8 +30,17 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
           <tr key={s.id}>
             <td>
               <div className="cust">
-                <div className="av" style={{ borderRadius: 9 }}>
-                  {ICONS[s.category]}
+                <div className="av" style={{ borderRadius: 9, overflow: "hidden" }}>
+                  {s.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={s.imageUrl}
+                      alt=""
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    ICONS[s.category]
+                  )}
                 </div>
                 <div>
                   <b>{s.name}</b>

@@ -6,8 +6,17 @@ export default function ServiceCard({ service, withBook = false }) {
   return (
     <div className="svc-card">
       <div className="svc-thumb">
+        {s.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={s.imageUrl}
+            alt={s.n}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <span className="ic">{ICONS[s.cat]}</span>
+        )}
         {s.deal && <span className="deal">{s.deal}</span>}
-        <span className="ic">{ICONS[s.cat]}</span>
         <span className="pricepill">CA${s.price}</span>
       </div>
       <div className="svc-body">

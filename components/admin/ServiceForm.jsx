@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { CATEGORIES } from "@/lib/constants";
+import { getFirebaseStorage } from "@/lib/firebase";
 
 const EMPTY = {
   name: "",
@@ -13,6 +15,7 @@ const EMPTY = {
   description: "",
   sortOrder: "",
   isActive: true,
+  imageUrl: "",
 };
 
 // Add / edit a service. `initial` (a raw service doc) puts it in edit mode.
@@ -30,11 +33,31 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
           description: initial.description ?? "",
           sortOrder: initial.sortOrder ?? "",
           isActive: initial.isActive ?? true,
+          imageUrl: initial.imageUrl ?? "",
         }
       : EMPTY
   );
   const [err, setErr] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
+
+  const onImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setErr(null);
+    setUploading(true);
+    try {
+      const storage = getFirebaseStorage();
+      if (!storage) throw new Error("Storage isn't available.");
+      const r = ref(storage, `beauty_bliss_Services/${Date.now()}-${file.name}`);
+      await uploadBytes(r, file);
+      set("imageUrl", await getDownloadURL(r));
+    } catch {
+      setErr("Image upload failed — please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const submit = (e) => {
     e.preventDefault();
@@ -52,6 +75,7 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
       description: f.description.trim(),
       sortOrder: Number(f.sortOrder) || 0,
       isActive: !!f.isActive,
+      imageUrl: f.imageUrl || null,
     });
   };
 
@@ -109,6 +133,28 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         <textarea rows="2" value={f.description} onChange={(e) => set("description", e.target.value)} placeholder="Short description shown on the services page." />
       </div>
 
+      <div className="field">
+        <label>
+          Image{" "}
+          <span style={{ color: "var(--muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
+            (optional — falls back to the category emoji)
+          </span>
+        </label>
+        {f.imageUrl && (
+          <div className="img-previews" style={{ marginBottom: 10 }}>
+            <div className="img-thumb">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={f.imageUrl} alt="" />
+              <div className="rm" onClick={() => set("imageUrl", "")}>✕</div>
+            </div>
+          </div>
+        )}
+        <input type="file" accept="image/*" onChange={onImage} disabled={uploading} />
+        {uploading && (
+          <div className="hint" style={{ marginTop: 6 }}>Uploading…</div>
+        )}
+      </div>
+
       <label
         style={{ display: "flex", gap: 10, alignItems: "center", margin: "4px 0 8px", fontSize: 13, color: "#6f655c", cursor: "pointer" }}
       >
@@ -122,7 +168,7 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         <button type="button" className="btn-prev" onClick={onCancel} disabled={saving}>
           Cancel
         </button>
-        <button type="submit" className="btn-next" disabled={saving}>
+        <button type="submit" className="btn-next" disabled={saving || uploading}>
           {saving ? "Saving…" : "Save service"}
         </button>
       </div>
