@@ -32,5 +32,8 @@ export function useAuth() {
     return auth ? signOut(auth) : Promise.resolve();
   };
 
-  return { user, loading, logout };
+  // Whether Firebase Auth could initialize at all (false when config is missing).
+  const configured = !!getFirebaseAuth();
+
+  return { user, loading, logout, configured };
 }

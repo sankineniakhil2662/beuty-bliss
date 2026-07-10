@@ -11,15 +11,38 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, configured } = useAuth();
   const isLogin = pathname === "/admin/login";
 
+  // Dev-only bypass: when Firebase Auth isn't configured (so login is
+  // impossible anyway) AND we're not in a production build, let the admin
+  // screens render without login. This self-disables the moment real Firebase
+  // config is added (configured → true) and never applies in production.
+  const devBypass =
+    process.env.NODE_ENV !== "production" && !configured;
+
   useEffect(() => {
+    if (devBypass) return;
     if (!loading && !user && !isLogin) router.replace("/admin/login");
-  }, [loading, user, isLogin, router]);
+  }, [devBypass, loading, user, isLogin, router]);
 
   // Login page renders standalone — no shell, no guard.
   if (isLogin) return children;
+
+  if (devBypass) {
+    return (
+      <div className="admin">
+        <AdminSidebar />
+        <main className="admin-main">
+          <div className="banner ok" style={{ fontSize: 12.5 }}>
+            🛠 Dev preview — login bypassed (Firebase not configured). Screens
+            show sample data.
+          </div>
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
