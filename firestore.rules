@@ -16,12 +16,17 @@ service cloud.firestore {
     }
 
     // Reviews: approved reviews are public; admin reads/moderates all.
-    // Public submission is NOT allowed directly — the secure /review/[token]
-    // flow (Phase 4) creates reviews server-side via the Admin SDK after
-    // validating the one-time token, so it bypasses these rules safely.
+    // Public submission is allowed but must land as "pending" (moderated before
+    // it ever shows). Phase 4 adds one-time-token verification on top of this.
     match /reviews/{reviewId} {
       allow read: if resource.data.status == 'approved' || isAdmin();
-      allow write: if isAdmin();
+      allow create: if request.resource.data.status == 'pending'
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.rating is number
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5;
+      allow update, delete: if isAdmin();
     }
 
     // Bookings: anyone can submit a request; only admin can read/manage.

@@ -3,14 +3,22 @@
 import { useEffect, useState } from "react";
 import AdminTopBar from "./AdminTopBar";
 import ServiceAdminTable from "./ServiceAdminTable";
+import ServiceForm from "./ServiceForm";
 import Banner from "./Banner";
 import EmptyState from "./EmptyState";
-import { fetchAllServicesAdmin, setServiceActive } from "@/lib/services";
+import {
+  createService,
+  fetchAllServicesAdmin,
+  setServiceActive,
+  updateService,
+} from "@/lib/services";
 
 export default function ServicesView() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState(null);
+  const [editing, setEditing] = useState(null); // null | "new" | serviceObject
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchAllServicesAdmin()
@@ -40,6 +48,32 @@ export default function ServicesView() {
     );
   };
 
+  const handleSave = async (data) => {
+    setSaving(true);
+    try {
+      if (editing === "new") {
+        const created = await createService(data);
+        setServices((prev) =>
+          [...prev, created].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        );
+        setBanner(`${data.name} added.`);
+      } else {
+        await updateService(editing.id, data);
+        setServices((prev) =>
+          prev
+            .map((s) => (s.id === editing.id ? { ...s, ...data } : s))
+            .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        );
+        setBanner(`${data.name} updated.`);
+      }
+      setEditing(null);
+    } catch {
+      setBanner("Couldn't save — please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <AdminTopBar
@@ -49,8 +83,7 @@ export default function ServicesView() {
           <button
             className="btn-next"
             style={{ fontSize: 12, padding: "11px 20px" }}
-            disabled
-            title="Adding services lands in a later milestone"
+            onClick={() => setEditing("new")}
           >
             + Add Service
           </button>
@@ -59,6 +92,15 @@ export default function ServicesView() {
 
       <Banner type="ok" message={banner} onDismiss={() => setBanner(null)} />
 
+      {editing && (
+        <ServiceForm
+          initial={editing === "new" ? undefined : editing}
+          onSave={handleSave}
+          onCancel={() => setEditing(null)}
+          saving={saving}
+        />
+      )}
+
       <div className="panel">
         <div className="panel-head">
           <h3>Your treatments</h3>
@@ -66,7 +108,11 @@ export default function ServicesView() {
         {loading ? (
           <EmptyState icon="⏳" title="Loading services…" message="One moment." />
         ) : (
-          <ServiceAdminTable services={services} onToggle={handleToggle} />
+          <ServiceAdminTable
+            services={services}
+            onToggle={handleToggle}
+            onEdit={(s) => setEditing(s)}
+          />
         )}
       </div>
     </div>

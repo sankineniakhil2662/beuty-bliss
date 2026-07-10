@@ -2,30 +2,54 @@
 
 import { useState } from "react";
 import StarPicker from "./StarPicker";
+import { submitReview } from "@/lib/reviews";
 
 // Placeholder photo thumbnails (emoji), matching the mockup. Real image upload
-// to Cloud Storage lands with the secure /review/[token] flow.
+// to Cloud Storage lands with the secure /review/[token] flow (Phase 4).
 const PHOTO_ICONS = ["🧴", "✨", "🧖", "🌸"];
 
-// The "Leave a review" form. On the public Reviews page it's a preview (no
-// onSubmit → shows a pending-approval note). The /review/[token] page will pass
-// a real onSubmit later.
-export default function ReviewForm({ onSubmit, verifiedNote }) {
+// "Leave a review" form. Submits a real review (status: pending) that appears
+// in the admin Reviews screen for approval. If an `onSubmit` prop is provided
+// (the token flow later), it's used instead of the direct write.
+export default function ReviewForm({ onSubmit }) {
+  const [name, setName] = useState("");
+  const [service, setService] = useState("");
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
   const [photos, setPhotos] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const addPhoto = () =>
     setPhotos((p) => (p.length >= 4 ? p : [...p, PHOTO_ICONS[p.length % PHOTO_ICONS.length]]));
   const removePhoto = (i) => setPhotos((p) => p.filter((_, idx) => idx !== i));
 
-  const handleSubmit = () => {
-    if (onSubmit) {
-      onSubmit({ rating, text, photos });
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      setError("Please add your name.");
       return;
     }
-    setSubmitted(true); // public preview
+    if (!text.trim()) {
+      setError("Please write a short review.");
+      return;
+    }
+    setError(null);
+    const review = { name, service, rating, text, photos };
+    if (onSubmit) {
+      onSubmit(review);
+      setSubmitted(true);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitReview(review);
+      setSubmitted(true);
+    } catch {
+      setError("Couldn't submit right now — please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -46,83 +70,111 @@ export default function ReviewForm({ onSubmit, verifiedNote }) {
         Leave a review
       </h3>
       <p style={{ fontSize: 13.5, color: "var(--muted)", marginBottom: 20 }}>
-        This form opens from the secure link in your &ldquo;treatment
-        complete&rdquo; email. Shown here for preview.
+        Share your experience — Sruthi checks each review before it appears
+        publicly.
       </p>
-
-      <div className="field">
-        <label>Your rating</label>
-        <StarPicker value={rating} onChange={setRating} />
-      </div>
-
-      <div className="field">
-        <label>Your review</label>
-        <textarea
-          rows="3"
-          placeholder="Tell others about your experience…"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </div>
-
-      <div className="field">
-        <label>
-          Add photos{" "}
-          <span
-            style={{
-              color: "var(--muted)",
-              fontWeight: 400,
-              textTransform: "none",
-              letterSpacing: 0,
-            }}
-          >
-            (optional — show your results)
-          </span>
-        </label>
-        <div className="img-upload" onClick={addPhoto}>
-          <div className="iu-ic">📷</div>
-          <b>Tap to add before / after photos</b>
-          <span>JPG or PNG · up to 4 images</span>
-        </div>
-        <div className="img-previews">
-          {photos.map((p, i) => (
-            <div key={i} className="img-thumb">
-              {p}
-              <div
-                className="rm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removePhoto(i);
-                }}
-              >
-                ✕
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="banner ok" style={{ fontSize: 12.5 }}>
-        🔒 {verifiedNote || "Verified as a real client — booking #BB-2026-0391 (Pearl Facial)"}
-      </div>
 
       {submitted ? (
-        <div className="banner ok" style={{ fontSize: 12.5 }}>
-          ✓ Review submitted — it appears once Sruthi approves it.
+        <div className="banner ok" style={{ fontSize: 13 }}>
+          ✓ Thank you! Your review has been submitted and appears once Sruthi
+          approves it.
         </div>
       ) : (
-        <button
-          className="btn-gold"
-          style={{ width: "100%", justifyContent: "center" }}
-          onClick={handleSubmit}
-        >
-          Submit for approval
-        </button>
-      )}
+        <>
+          <div className="field">
+            <label>
+              Your name <span className="req">*</span>
+            </label>
+            <input
+              placeholder="e.g. Priya S."
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-      <p className="hint" style={{ textAlign: "center", marginTop: 12 }}>
-        Your review appears once Sruthi approves it.
-      </p>
+          <div className="field">
+            <label>Service you had</label>
+            <input
+              placeholder="e.g. Korean Glass Facial"
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label>Your rating</label>
+            <StarPicker value={rating} onChange={setRating} />
+          </div>
+
+          <div className="field">
+            <label>
+              Your review <span className="req">*</span>
+            </label>
+            <textarea
+              rows="3"
+              placeholder="Tell others about your experience…"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label>
+              Add photos{" "}
+              <span
+                style={{
+                  color: "var(--muted)",
+                  fontWeight: 400,
+                  textTransform: "none",
+                  letterSpacing: 0,
+                }}
+              >
+                (optional — show your results)
+              </span>
+            </label>
+            <div className="img-upload" onClick={addPhoto}>
+              <div className="iu-ic">📷</div>
+              <b>Tap to add before / after photos</b>
+              <span>JPG or PNG · up to 4 images</span>
+            </div>
+            <div className="img-previews">
+              {photos.map((p, i) => (
+                <div key={i} className="img-thumb">
+                  {p}
+                  <div
+                    className="rm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removePhoto(i);
+                    }}
+                  >
+                    ✕
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {error && (
+            <div className="banner err" style={{ fontSize: 12.5 }}>
+              ⚠ {error}
+            </div>
+          )}
+
+          <button
+            className="btn-gold"
+            style={{ width: "100%", justifyContent: "center" }}
+            onClick={handleSubmit}
+            disabled={submitting}
+          >
+            {submitting ? "Submitting…" : "Submit for approval"}
+          </button>
+
+          <p className="hint" style={{ textAlign: "center", marginTop: 12 }}>
+            Your review appears once Sruthi approves it.
+          </p>
+        </>
+      )}
     </div>
   );
 }

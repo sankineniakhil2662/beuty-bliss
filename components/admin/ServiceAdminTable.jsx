@@ -2,10 +2,8 @@ import { ICONS } from "@/lib/constants";
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
 
-// `onToggle(service)` flips isActive locally. "Edit" has no backing behavior
-// anywhere in the mockup either (a dead button even in the source HTML) and
-// building a full edit form is out of scope here, so it stays disabled.
-export default function ServiceAdminTable({ services, onToggle }) {
+// `onToggle(service)` flips isActive; `onEdit(service)` opens the edit form.
+export default function ServiceAdminTable({ services, onToggle, onEdit }) {
   if (!services.length) {
     return (
       <EmptyState
@@ -62,9 +60,7 @@ export default function ServiceAdminTable({ services, onToggle }) {
             </td>
             <td>
               <div className="row-act">
-                <button disabled title="Editing services lands in a later milestone">
-                  Edit
-                </button>
+                <button onClick={() => onEdit(s)}>Edit</button>
                 <button onClick={() => onToggle(s)}>
                   {s.isActive ? "Hide" : "Show"}
                 </button>
