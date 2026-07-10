@@ -3,19 +3,31 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Services: publicly readable so the site can list them.
-    // Writes are admin-only. To seed, temporarily allow write here (or use the
-    // Admin SDK) — see scripts/seed-services.mjs.
-    match /services/{serviceId} {
-      allow read: if true;
-      allow write: if false;
+    // The studio owner's account carries a custom claim { admin: true }
+    // (set via the Admin SDK). Everything privileged is gated on it.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
     }
 
-    // Bookings: anyone can submit a request from the public booking form.
-    // Reading/updating/deleting is admin-only (wired in the admin phase).
+    // Services: publicly readable (the site lists them). Admin manages them.
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Reviews: approved reviews are public; admin reads/moderates all.
+    // Public submission is NOT allowed directly — the secure /review/[token]
+    // flow (Phase 4) creates reviews server-side via the Admin SDK after
+    // validating the one-time token, so it bypasses these rules safely.
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Bookings: anyone can submit a request; only admin can read/manage.
     match /bookings/{bookingId} {
       allow create: if true;
-      allow read, update, delete: if false;
+      allow read, update, delete: if isAdmin();
     }
   }
 }

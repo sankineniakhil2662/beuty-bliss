@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminTopBar from "./AdminTopBar";
 import ReviewModeration from "./ReviewModeration";
 import TabPills from "./TabPills";
 import Banner from "./Banner";
-import { MOCK_REVIEWS } from "@/lib/mock/reviews";
+import EmptyState from "./EmptyState";
+import {
+  fetchAllReviewsForAdmin,
+  removeReview,
+  setReviewStatus,
+} from "@/lib/reviews";
 
 const TABS = [
   { key: "all", label: "All" },
@@ -25,22 +30,36 @@ const NEXT_STATUS = {
   Hide: "hidden",
 };
 
-// `reviews` defaults to the shared mock dataset so this component can be
-// swapped to real Firestore data in Phase 4 by simply passing a real prop
-// (same convention as BookingsView).
-export default function ReviewsView({ reviews: initialReviews = MOCK_REVIEWS }) {
-  const [reviews, setReviews] = useState(initialReviews);
+export default function ReviewsView() {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [banner, setBanner] = useState(null);
 
-  const handleAction = (review, actionLabel) => {
-    if (actionLabel === "Remove") {
-      setReviews((prev) => prev.filter((r) => r.id !== review.id));
-    } else {
-      const nextStatus = NEXT_STATUS[actionLabel];
-      setReviews((prev) =>
-        prev.map((r) => (r.id === review.id ? { ...r, status: nextStatus } : r))
-      );
+  useEffect(() => {
+    fetchAllReviewsForAdmin()
+      .then(setReviews)
+      .catch(() => setBanner("Couldn't load reviews — check you're signed in as admin."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleAction = async (review, actionLabel) => {
+    const snapshot = reviews;
+    try {
+      if (actionLabel === "Remove") {
+        setReviews((prev) => prev.filter((r) => r.id !== review.id));
+        await removeReview(review.id);
+      } else {
+        const nextStatus = NEXT_STATUS[actionLabel];
+        setReviews((prev) =>
+          prev.map((r) => (r.id === review.id ? { ...r, status: nextStatus } : r))
+        );
+        await setReviewStatus(review.id, nextStatus);
+      }
+    } catch {
+      setReviews(snapshot); // revert
+      setBanner("Update failed — please try again.");
+      return;
     }
     setBanner(
       ACTION_MESSAGE[actionLabel]?.(review.name) ?? `${actionLabel} — ${review.name}`
@@ -64,7 +83,11 @@ export default function ReviewsView({ reviews: initialReviews = MOCK_REVIEWS }) 
         <div className="panel-head">
           <TabPills tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
-        <ReviewModeration reviews={visible} onAction={handleAction} />
+        {loading ? (
+          <EmptyState icon="⏳" title="Loading reviews…" message="One moment." />
+        ) : (
+          <ReviewModeration reviews={visible} onAction={handleAction} />
+        )}
       </div>
     </div>
   );

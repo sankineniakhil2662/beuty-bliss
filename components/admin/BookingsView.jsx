@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminTopBar from "./AdminTopBar";
 import BookingTable from "./BookingTable";
 import TabPills from "./TabPills";
 import Banner from "./Banner";
-import { MOCK_BOOKINGS } from "@/lib/mock/bookings";
+import EmptyState from "./EmptyState";
+import { fetchAllBookings, updateBookingStatus } from "@/lib/bookings";
 
 const TABS = [
   { key: "all", label: "All" },
@@ -34,21 +35,37 @@ const ACTION_MESSAGE = {
   "Resend review link": (name) => `Review link resent to ${name}.`,
 };
 
-// `bookings` defaults to the shared mock dataset so this component can be
-// swapped to real Firestore data in Phase 4 by simply passing a real prop.
-export default function BookingsView({ bookings: initialBookings = MOCK_BOOKINGS }) {
-  const [bookings, setBookings] = useState(initialBookings);
+export default function BookingsView() {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [banner, setBanner] = useState(null);
 
-  const handleAction = (booking, actionLabel) => {
+  useEffect(() => {
+    fetchAllBookings()
+      .then(setBookings)
+      .catch(() => setBanner("Couldn't load bookings — check you're signed in as admin."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleAction = async (booking, actionLabel) => {
     const nextStatus = NEXT_STATUS[actionLabel];
     if (nextStatus) {
+      const prevStatus = booking.status;
+      // optimistic update
       setBookings((prev) =>
-        prev.map((b) =>
-          b.id === booking.id ? { ...b, status: nextStatus } : b
-        )
+        prev.map((b) => (b.id === booking.id ? { ...b, status: nextStatus } : b))
       );
+      try {
+        await updateBookingStatus(booking.id, nextStatus);
+      } catch {
+        // revert on failure
+        setBookings((prev) =>
+          prev.map((b) => (b.id === booking.id ? { ...b, status: prevStatus } : b))
+        );
+        setBanner("Update failed — please try again.");
+        return;
+      }
     }
     setBanner(ACTION_MESSAGE[actionLabel]?.(booking.name) ?? `${actionLabel} — ${booking.name}`);
   };
@@ -70,7 +87,11 @@ export default function BookingsView({ bookings: initialBookings = MOCK_BOOKINGS
         <div className="panel-head">
           <TabPills tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
-        <BookingTable bookings={visible} onAction={handleAction} />
+        {loading ? (
+          <EmptyState icon="⏳" title="Loading bookings…" message="One moment." />
+        ) : (
+          <BookingTable bookings={visible} onAction={handleAction} />
+        )}
       </div>
     </div>
   );

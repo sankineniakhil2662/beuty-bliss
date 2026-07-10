@@ -1,30 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminTopBar from "./AdminTopBar";
 import ServiceAdminTable from "./ServiceAdminTable";
 import Banner from "./Banner";
-import { SEED_SERVICES } from "@/lib/services";
-
-// Reuses the real SEED_SERVICES constant directly instead of a separate mock
-// file — it already matches the mockup's service list. Local ids + marking
-// the 10th service hidden (mirroring the mockup's own "Birthday Glow-Up"
-// demo row) are added here only, without touching lib/services.js.
-const INITIAL_SERVICES = SEED_SERVICES.map((s, i) => ({
-  id: `mock-${i}`,
-  ...s,
-  isActive: i === 9 ? false : s.isActive,
-}));
+import EmptyState from "./EmptyState";
+import { fetchAllServicesAdmin, setServiceActive } from "@/lib/services";
 
 export default function ServicesView() {
-  const [services, setServices] = useState(INITIAL_SERVICES);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState(null);
 
-  const handleToggle = (service) => {
+  useEffect(() => {
+    fetchAllServicesAdmin()
+      .then(setServices)
+      .catch(() => setBanner("Couldn't load services — check you're signed in as admin."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleToggle = async (service) => {
     const nowActive = !service.isActive;
     setServices((prev) =>
       prev.map((s) => (s.id === service.id ? { ...s, isActive: nowActive } : s))
     );
+    try {
+      await setServiceActive(service.id, nowActive);
+    } catch {
+      setServices((prev) =>
+        prev.map((s) => (s.id === service.id ? { ...s, isActive: !nowActive } : s))
+      );
+      setBanner("Update failed — please try again.");
+      return;
+    }
     setBanner(
       nowActive
         ? `${service.name} is visible on the site again.`
@@ -55,7 +63,11 @@ export default function ServicesView() {
         <div className="panel-head">
           <h3>Your treatments</h3>
         </div>
-        <ServiceAdminTable services={services} onToggle={handleToggle} />
+        {loading ? (
+          <EmptyState icon="⏳" title="Loading services…" message="One moment." />
+        ) : (
+          <ServiceAdminTable services={services} onToggle={handleToggle} />
+        )}
       </div>
     </div>
   );
