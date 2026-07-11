@@ -4,7 +4,7 @@ export default function SiteNav() {
   return (
     <div className="site-nav">
       <div className="brand">
-        <img src="/logo.jpeg" alt="Beauty Bliss by Sruthi" />
+        <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" />
         <div className="bn">
           <b>Beauty Bliss</b>
           <span>by Sruthi</span>

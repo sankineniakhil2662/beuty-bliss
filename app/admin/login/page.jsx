@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
           className="brand"
           style={{ marginBottom: 18, justifyContent: "center" }}
         >
-          <img src="/logo.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 44 }} />
+          <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 44 }} />
           <div className="bn">
             <b>Beauty Bliss</b>
             <span>Admin</span>

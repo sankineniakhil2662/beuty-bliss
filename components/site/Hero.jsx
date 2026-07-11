@@ -42,7 +42,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-logo">
-          <img src="/logo.jpeg" alt="Beauty Bliss by Sruthi" />
+          <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" />
         </div>
       </div>
     </div>

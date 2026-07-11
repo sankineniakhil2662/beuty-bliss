@@ -16,7 +16,7 @@ export default async function BookPage() {
         <div className="site-nav" style={{ paddingTop: 6, paddingBottom: 6 }}>
           <div className="brand">
             <img
-              src="/logo.jpeg"
+              src="/BB.jpeg"
               alt="Beauty Bliss by Sruthi"
               style={{ height: 44 }}
             />

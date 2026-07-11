@@ -21,7 +21,7 @@ export default function AdminSidebar() {
   return (
     <aside className="admin-side">
       <div className="a-brand">
-        <img src="/logo.jpeg" alt="" className="logoSlot" style={{ height: 40 }} />
+        <img src="/BB.jpeg" alt="" className="logoSlot" style={{ height: 40 }} />
         <b>
           Beauty Bliss<span>Admin</span>
         </b>

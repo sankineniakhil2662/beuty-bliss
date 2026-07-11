@@ -79,7 +79,7 @@ export default function TokenReview({ token }) {
     >
       <div style={{ width: "100%", maxWidth: 560 }}>
         <div className="brand" style={{ justifyContent: "center", marginBottom: 24 }}>
-          <img src="/logo.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 48 }} />
+          <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 48 }} />
           <div className="bn">
             <b>Beauty Bliss</b>
             <span>by Sruthi</span>
