@@ -5,6 +5,8 @@ import { Fragment } from "react";
 // Step 4: review & confirm. Derives display strings from props; the consent
 // checkbox and submit gating are owned by BookingWizard.
 export default function StepConfirm({
+  year,
+  month,
   details,
   lines,
   total,
@@ -19,7 +21,7 @@ export default function StepConfirm({
 }) {
   const dayLabel =
     selectedDate != null
-      ? new Date(2026, 6, selectedDate).toLocaleDateString("en-GB", {
+      ? new Date(year, month, selectedDate).toLocaleDateString("en-GB", {
           weekday: "long",
           day: "numeric",
           month: "long",

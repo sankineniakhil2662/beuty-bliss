@@ -1,11 +1,13 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { getAdminDb } from "@/lib/firebaseAdmin";
 import { hashToken } from "@/lib/reviewToken";
 
 // Find the booking whose stored reviewTokenHash matches this raw token,
 // as long as the token hasn't been used yet.
 async function findBookingByToken(token) {
   if (!token) return null;
+  const adminDb = getAdminDb();
+  if (!adminDb) return null;
   const hash = await hashToken(token);
   const snap = await adminDb
     .collection("bookings")
@@ -57,6 +59,11 @@ export async function POST(request, { params }) {
     const photos = Array.isArray(body.photoUrls) ? body.photoUrls.slice(0, 4) : [];
     if (!text) {
       return Response.json({ error: "Please write a review." }, { status: 400 });
+    }
+
+    const adminDb = getAdminDb();
+    if (!adminDb) {
+      return Response.json({ error: "Admin backend not configured" }, { status: 503 });
     }
 
     await adminDb.collection("reviews").add({

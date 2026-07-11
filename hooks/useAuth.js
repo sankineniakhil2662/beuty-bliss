@@ -8,14 +8,14 @@ import { getFirebaseAuth } from "@/lib/firebase";
 // while the initial auth state resolves, and a logout helper.
 export function useAuth() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Lazy initial value (not an effect-driven setState): if auth can't
+  // initialize at all, we're already done loading — there's nothing to wait
+  // for. If it can, start loading until onAuthStateChanged fires once.
+  const [loading, setLoading] = useState(() => !!getFirebaseAuth());
 
   useEffect(() => {
     const auth = getFirebaseAuth();
-    if (!auth) {
-      setLoading(false); // auth not configured → treat as logged out
-      return;
-    }
+    if (!auth) return; // handled by the initial state above
     const unsub = onAuthStateChanged(
       auth,
       (u) => {

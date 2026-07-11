@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ICONS } from "@/lib/constants";
 
 export default function ServiceCard({ service, withBook = false }) {
@@ -7,11 +8,12 @@ export default function ServiceCard({ service, withBook = false }) {
     <div className="svc-card">
       <div className="svc-thumb">
         {s.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={s.imageUrl}
             alt={s.n}
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            fill
+            style={{ objectFit: "cover" }}
+            sizes="(max-width: 620px) 100vw, (max-width: 980px) 50vw, 33vw"
           />
         ) : (
           <span className="ic">{ICONS[s.cat]}</span>

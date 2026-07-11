@@ -1,9 +1,8 @@
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
 
-// July 2026 bookings only exist as "YYYY-MM-DD" strings today (see
-// lib/mock/bookings.js / lib/bookings.js), so format them the same way
-// StepConfirm.jsx already formats the preferred date elsewhere in the app.
+// Bookings store preferredDate as a "YYYY-MM-DD" string (see lib/bookings.js),
+// so format it the same way StepConfirm.jsx formats it during checkout.
 function formatDay(iso) {
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString("en-GB", {
@@ -47,6 +46,7 @@ export default function BookingTable({ bookings, onAction }) {
   }
 
   return (
+    <div className="table-scroll">
     <table className="booking">
       <thead>
         <tr>
@@ -106,5 +106,6 @@ export default function BookingTable({ bookings, onAction }) {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }

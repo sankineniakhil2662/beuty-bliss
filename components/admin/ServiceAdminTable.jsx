@@ -15,6 +15,7 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
   }
 
   return (
+    <div className="table-scroll">
     <table className="booking">
       <thead>
         <tr>
@@ -79,5 +80,6 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
         ))}
       </tbody>
     </table>
+    </div>
   );
 }

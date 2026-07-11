@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { CATEGORIES } from "@/lib/constants";
 import { getFirebaseStorage } from "@/lib/firebase";
@@ -92,7 +93,13 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         <input value={f.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Korean Glass Facial" />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: 14,
+        }}
+      >
         <div className="field">
           <label>Category</label>
           <select value={f.category} onChange={(e) => set("category", e.target.value)}>
@@ -113,7 +120,13 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: 14,
+        }}
+      >
         <div className="field">
           <label>Price (CAD)</label>
           <input type="number" value={f.priceCad} onChange={(e) => set("priceCad", e.target.value)} placeholder="100" />
@@ -143,8 +156,7 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         {f.imageUrl && (
           <div className="img-previews" style={{ marginBottom: 10 }}>
             <div className="img-thumb">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={f.imageUrl} alt="" />
+              <Image src={f.imageUrl} alt="" fill style={{ objectFit: "cover" }} sizes="74px" />
               <div className="rm" onClick={() => set("imageUrl", "")}>✕</div>
             </div>
           </div>

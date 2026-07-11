@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
@@ -54,7 +55,13 @@ export default function AdminLoginPage() {
           className="brand"
           style={{ marginBottom: 18, justifyContent: "center" }}
         >
-          <img src="/logo.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 44 }} />
+          <Image
+            src="/logo.jpeg"
+            alt="Beauty Bliss by Sruthi"
+            width={162}
+            height={108}
+            style={{ height: 44, width: "auto" }}
+          />
           <div className="bn">
             <b>Beauty Bliss</b>
             <span>Admin</span>

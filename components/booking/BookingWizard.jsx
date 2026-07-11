@@ -55,6 +55,13 @@ export default function BookingWizard({ services }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  // Single-month booking calendar: always the real current month (previously
+  // hardcoded to July 2026, which would have silently broken every booking
+  // after that month). Computed once per mount.
+  const now = useMemo(() => new Date(), []);
+  const bookingYear = now.getFullYear();
+  const bookingMonth = now.getMonth();
+
   // validation display flags
   const [showSvcErr, setShowSvcErr] = useState(false);
   const [fieldState, setFieldState] = useState({ name: null, email: null, phone: null });
@@ -142,7 +149,7 @@ export default function BookingWizard({ services }) {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      const preferredDate = `2026-07-${String(selectedDate).padStart(2, "0")}`;
+      const preferredDate = `${bookingYear}-${String(bookingMonth + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
       const res = await fetch("/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -223,6 +230,8 @@ export default function BookingWizard({ services }) {
 
           {step === 3 && (
             <StepDay
+              year={bookingYear}
+              month={bookingMonth}
               selectedDate={selectedDate}
               onSelectDate={(d) => {
                 setSelectedDate(d);
@@ -236,6 +245,8 @@ export default function BookingWizard({ services }) {
 
           {step === 4 && (
             <StepConfirm
+              year={bookingYear}
+              month={bookingMonth}
               details={details}
               lines={lines}
               total={total}
