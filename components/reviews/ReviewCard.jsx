@@ -1,3 +1,5 @@
+import ReviewPhoto from "./ReviewPhoto";
+
 // A single public review card. `review` uses the mockup aliases: nm, svc, r, t,
 // photos (optional).
 export default function ReviewCard({ review: r }) {
@@ -12,9 +14,7 @@ export default function ReviewCard({ review: r }) {
       {r.photos && r.photos.length > 0 && (
         <div className="rphotos">
           {r.photos.map((p, i) => (
-            <div key={i} className="rp">
-              {p}
-            </div>
+            <ReviewPhoto key={i} photo={p} />
           ))}
         </div>
       )}

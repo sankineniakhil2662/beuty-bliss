@@ -1,5 +1,6 @@
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
+import ReviewPhoto from "@/components/reviews/ReviewPhoto";
 
 function formatDate(iso) {
   const d = new Date(iso + "T00:00:00");
@@ -55,9 +56,7 @@ export default function ReviewModeration({ reviews, onAction }) {
             {r.photos && r.photos.length > 0 && (
               <div className="rphotos">
                 {r.photos.map((p, i) => (
-                  <div className="rp" key={i}>
-                    {p}
-                  </div>
+                  <ReviewPhoto key={i} photo={p} />
                 ))}
               </div>
             )}
