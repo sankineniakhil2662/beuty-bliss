@@ -42,7 +42,13 @@ export default function StepDetails({
         <div className="errmsg">⚠ Please enter your full name</div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 90px", gap: 14 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+          gap: 14,
+        }}
+      >
         <div className={fieldClass(fieldState.email)}>
           <label>
             Email <span className="req">*</span>

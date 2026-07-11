@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { getServices } from "@/lib/services";
 
@@ -15,10 +16,12 @@ export default async function BookPage() {
       <div style={{ background: "var(--charcoal)", padding: "16px 0" }}>
         <div className="site-nav" style={{ paddingTop: 6, paddingBottom: 6 }}>
           <div className="brand">
-            <img
+            <Image
               src="/BB.jpeg"
               alt="Beauty Bliss by Sruthi"
-              style={{ height: 44 }}
+              width={162}
+              height={108}
+              style={{ height: 44, width: "auto" }}
             />
             <div className="bn">
               <b style={{ color: "var(--cream)", fontSize: 19 }}>Beauty Bliss</b>

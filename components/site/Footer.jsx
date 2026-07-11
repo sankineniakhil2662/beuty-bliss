@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -6,10 +7,12 @@ export default function Footer() {
       <div className="foot-inner">
         <div>
           <div className="brand" style={{ marginBottom: 16 }}>
-            <img
+            <Image
               src="/BB.jpeg"
               alt="Beauty Bliss by Sruthi"
-              style={{ height: 46, borderRadius: 7 }}
+              width={162}
+              height={108}
+              style={{ height: 46, width: "auto", borderRadius: 7 }}
             />
             <div className="bn">
               <b style={{ color: "var(--cream)", fontSize: 20 }}>Beauty Bliss</b>

@@ -1,4 +1,4 @@
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { getAdminAuth, getAdminDb } from "@/lib/firebaseAdmin";
 import { sendSms } from "@/lib/notify";
 
 // Verify the caller is the signed-in admin (Bearer ID token with admin claim).
@@ -6,6 +6,8 @@ async function requireAdmin(request) {
   const authz = request.headers.get("authorization") || "";
   const token = authz.startsWith("Bearer ") ? authz.slice(7) : null;
   if (!token) return null;
+  const adminAuth = getAdminAuth();
+  if (!adminAuth) return null;
   try {
     const decoded = await adminAuth.verifyIdToken(token);
     return decoded.admin === true ? decoded : null;
@@ -36,6 +38,11 @@ export async function POST(request) {
   const { bookingId, event, reviewLink } = await request.json().catch(() => ({}));
   if (!bookingId || !event) {
     return Response.json({ error: "Missing bookingId or event" }, { status: 400 });
+  }
+
+  const adminDb = getAdminDb();
+  if (!adminDb) {
+    return Response.json({ error: "Admin backend not configured" }, { status: 503 });
   }
 
   const snap = await adminDb.collection("bookings").doc(bookingId).get();

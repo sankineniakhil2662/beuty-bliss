@@ -1,24 +1,31 @@
 "use client";
 
-// July 2026 calendar grid. Sundays & Mondays are closed (off). Day 9 is
-// flagged "today" to match the mockup. Selection state lives in BookingWizard.
 const DOW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-export default function DayPicker({ selectedDate, onSelect }) {
+// Renders the calendar grid for the given year/month (0-indexed, same as
+// Date). Sundays, Mondays, and any day already in the past are disabled.
+// Selection state lives in BookingWizard.
+export default function DayPicker({ year, month, selectedDate, onSelect }) {
   const cells = [];
+  const now = new Date();
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+  const todayDate = now.getDate();
 
   DOW.forEach((d) => cells.push(<div key={"h-" + d} className="dh">{d}</div>));
 
-  // July 1, 2026 falls on a Wednesday → 3 leading blanks (Su, Mo, Tu).
-  for (let i = 0; i < 3; i++) cells.push(<div key={"blank-" + i}></div>);
+  const firstWeekday = new Date(year, month, 1).getDay();
+  for (let i = 0; i < firstWeekday; i++) cells.push(<div key={"blank-" + i}></div>);
 
-  for (let d = 1; d <= 31; d++) {
-    const dow = new Date(2026, 6, d).getDay();
-    const off = dow === 0 || dow === 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dow = new Date(year, month, d).getDay();
+    const isPast = isCurrentMonth && d < todayDate;
+    const off = dow === 0 || dow === 1 || isPast;
+    const isToday = isCurrentMonth && d === todayDate;
     const cls =
       "day" +
       (off ? " off" : "") +
-      (d === 9 ? " today" : "") +
+      (isToday ? " today" : "") +
       (selectedDate === d ? " sel" : "");
     cells.push(
       <div

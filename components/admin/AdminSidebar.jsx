@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -21,7 +22,14 @@ export default function AdminSidebar() {
   return (
     <aside className="admin-side">
       <div className="a-brand">
-        <img src="/BB.jpeg" alt="" className="logoSlot" style={{ height: 40 }} />
+        <Image
+          src="/BB.jpeg"
+          alt=""
+          className="logoSlot"
+          width={162}
+          height={108}
+          style={{ height: 40, width: "auto" }}
+        />
         <b>
           Beauty Bliss<span>Admin</span>
         </b>

@@ -2,15 +2,22 @@
 
 import DayPicker from "./DayPicker";
 
-// Step 3: pick a preferred day. Month is fixed to July 2026 (mockup); the
-// arrows are decorative for now.
+// Step 3: pick a preferred day within the current month. The prev/next
+// arrows are decorative — this is a single-month view by design.
 export default function StepDay({
+  year,
+  month,
   selectedDate,
   onSelectDate,
   showError,
   onBack,
   onReview,
 }) {
+  const monthLabel = new Date(year, month, 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div>
       <h2 className="serif" style={{ fontSize: 30, marginBottom: 6 }}>
@@ -33,14 +40,19 @@ export default function StepDay({
           ‹
         </button>
         <b className="serif" style={{ fontSize: 22 }}>
-          July 2026
+          {monthLabel}
         </b>
         <button className="btn-prev" style={{ padding: "8px 14px", fontSize: 12 }}>
           ›
         </button>
       </div>
 
-      <DayPicker selectedDate={selectedDate} onSelect={onSelectDate} />
+      <DayPicker
+        year={year}
+        month={month}
+        selectedDate={selectedDate}
+        onSelect={onSelectDate}
+      />
 
       <div
         style={{

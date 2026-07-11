@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SiteNav from "./SiteNav";
 
 export default function Hero() {
@@ -42,7 +43,14 @@ export default function Hero() {
           </div>
         </div>
         <div className="hero-logo">
-          <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" />
+          <Image
+            src="/BB.jpeg"
+            alt="Beauty Bliss by Sruthi"
+            width={430}
+            height={287}
+            priority
+            sizes="(max-width: 980px) 300px, 430px"
+          />
         </div>
       </div>
     </div>

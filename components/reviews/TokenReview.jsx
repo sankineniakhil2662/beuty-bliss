@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import StarPicker from "./StarPicker";
 import { getFirebaseStorage } from "@/lib/firebase";
@@ -31,6 +32,17 @@ export default function TokenReview({ token }) {
   }, [token]);
 
   const onFiles = (e) => setFiles([...e.target.files].slice(0, 4));
+
+  // Object URLs are derived from `files`, not separate state — computed once
+  // per selection change (not on every unrelated re-render), with a
+  // cleanup-only effect to revoke them so they don't leak.
+  const previewUrls = useMemo(
+    () => files.map((f) => URL.createObjectURL(f)),
+    [files]
+  );
+  useEffect(() => {
+    return () => previewUrls.forEach((u) => URL.revokeObjectURL(u));
+  }, [previewUrls]);
 
   const submit = async () => {
     if (!text.trim()) {
@@ -79,7 +91,13 @@ export default function TokenReview({ token }) {
     >
       <div style={{ width: "100%", maxWidth: 560 }}>
         <div className="brand" style={{ justifyContent: "center", marginBottom: 24 }}>
-          <img src="/BB.jpeg" alt="Beauty Bliss by Sruthi" style={{ height: 48 }} />
+          <Image
+            src="/BB.jpeg"
+            alt="Beauty Bliss by Sruthi"
+            width={162}
+            height={108}
+            style={{ height: 48, width: "auto" }}
+          />
           <div className="bn">
             <b>Beauty Bliss</b>
             <span>by Sruthi</span>
@@ -171,10 +189,10 @@ export default function TokenReview({ token }) {
               <input type="file" accept="image/*" multiple onChange={onFiles} />
               {files.length > 0 && (
                 <div className="img-previews">
-                  {files.map((f, i) => (
+                  {previewUrls.map((url, i) => (
                     <div key={i} className="img-thumb">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={URL.createObjectURL(f)} alt="" />
+                      <img src={url} alt="" />
                     </div>
                   ))}
                 </div>
