@@ -15,10 +15,10 @@ export default function StepServices({
 }) {
   return (
     <div>
-      <h2 className="serif" style={{ fontSize: 30, marginBottom: 6 }}>
+      <h2 className="step-head">
         Choose your treatments
       </h2>
-      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 22 }}>
+      <p className="step-sub">
         Add one or more services. Use + and − to set how many of each you&apos;d
         like.
       </p>

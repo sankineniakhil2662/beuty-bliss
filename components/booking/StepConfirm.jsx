@@ -32,7 +32,7 @@ export default function StepConfirm({
 
   return (
     <div>
-      <h2 className="serif" style={{ fontSize: 30, marginBottom: 6 }}>
+      <h2 className="step-head">
         Review &amp; confirm
       </h2>
       <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 24 }}>
@@ -134,7 +134,7 @@ export default function StepConfirm({
           ← Back
         </button>
         <button className="btn-next" onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Sending…" : "Send Request"}
+          {submitting ? "Sending…" : "Confirm"}
         </button>
       </div>
     </div>

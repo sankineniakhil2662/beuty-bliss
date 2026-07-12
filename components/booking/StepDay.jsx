@@ -1,15 +1,19 @@
 "use client";
 
-import { AlertTriangle, ChevronLeft, ChevronRight, Circle, X } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import DayPicker from "./DayPicker";
 
-// Step 3: pick a preferred day within the current month. The prev/next
-// arrows are decorative — this is a single-month view by design.
+// Step 3: pick a preferred day. The prev/next arrows page the single-month
+// view backward/forward; navigating past months is blocked since a past day
+// can't be booked.
 export default function StepDay({
   year,
   month,
   selectedDate,
   onSelectDate,
+  onPrevMonth,
+  onNextMonth,
+  canGoPrevMonth,
   showError,
   onBack,
   onReview,
@@ -21,10 +25,10 @@ export default function StepDay({
 
   return (
     <div>
-      <h2 className="serif" style={{ fontSize: 30, marginBottom: 6 }}>
+      <h2 className="step-head">
         Choose your preferred day
       </h2>
-      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 8 }}>
+      <p className="step-sub" style={{ marginBottom: 8 }}>
         Pick the day that works for you. Sruthi will call to lock in the exact
         time.
       </p>
@@ -37,13 +41,26 @@ export default function StepDay({
           margin: "18px 0 4px",
         }}
       >
-        <button className="btn-prev" style={{ padding: "8px 14px", fontSize: 12 }}>
+        <button
+          type="button"
+          className="btn-prev"
+          style={{ padding: "8px 14px", fontSize: 12 }}
+          onClick={onPrevMonth}
+          disabled={!canGoPrevMonth}
+          aria-label="Previous month"
+        >
           <ChevronLeft size={14} />
         </button>
         <b className="serif" style={{ fontSize: 22 }}>
           {monthLabel}
         </b>
-        <button className="btn-prev" style={{ padding: "8px 14px", fontSize: 12 }}>
+        <button
+          type="button"
+          className="btn-prev"
+          style={{ padding: "8px 14px", fontSize: 12 }}
+          onClick={onNextMonth}
+          aria-label="Next month"
+        >
           <ChevronRight size={14} />
         </button>
       </div>
@@ -69,9 +86,6 @@ export default function StepDay({
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
           <Circle size={10} color="#cabfb3" /> Available
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <X size={12} color="#cabfb3" /> Closed (Sun/Mon)
         </span>
       </div>
 

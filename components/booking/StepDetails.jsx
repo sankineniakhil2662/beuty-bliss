@@ -24,10 +24,10 @@ export default function StepDetails({
 }) {
   return (
     <div>
-      <h2 className="serif" style={{ fontSize: 30, marginBottom: 6 }}>
+      <h2 className="step-head">
         Your details
       </h2>
-      <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 24 }}>
+      <p className="step-sub" style={{ marginBottom: 24 }}>
         We&apos;ll use this to confirm your appointment and follow up on timing.
       </p>
 
