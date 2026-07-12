@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import CarouselUploadForm from "./CarouselUploadForm";
 import CarouselGrid from "./CarouselGrid";
+import FeaturedPicker from "./FeaturedPicker";
 import Banner from "./Banner";
 import EmptyState from "./EmptyState";
 import {
@@ -13,12 +14,20 @@ import {
   fetchAllCarouselImagesAdmin,
   setCarouselImageActive,
 } from "@/lib/carousel";
+import {
+  FEATURED_LIMIT,
+  fetchAllServicesAdmin,
+  setServiceFeatured,
+} from "@/lib/services";
 
 export default function CarouselView() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState(null);
   const [bannerType, setBannerType] = useState("ok");
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [busyId, setBusyId] = useState(null);
 
   useEffect(() => {
     fetchAllCarouselImagesAdmin()
@@ -28,7 +37,48 @@ export default function CarouselView() {
         setBanner("Couldn't load carousel images — check you're signed in as admin.");
       })
       .finally(() => setLoading(false));
+
+    fetchAllServicesAdmin()
+      .then(setServices)
+      .catch(() => {
+        setBannerType("err");
+        setBanner("Couldn't load services — check you're signed in as admin.");
+      })
+      .finally(() => setServicesLoading(false));
   }, []);
+
+  const handleToggleFeatured = async (service) => {
+    const nowFeatured = !service.isFeatured;
+    setBusyId(service.id);
+    setServices((prev) =>
+      prev.map((s) =>
+        s.id === service.id ? { ...s, isFeatured: nowFeatured } : s
+      )
+    );
+    try {
+      await setServiceFeatured(service.id, nowFeatured);
+      setBannerType("ok");
+      setBanner(
+        nowFeatured
+          ? `${service.name} now appears on the home page.`
+          : `${service.name} removed from the home page.`
+      );
+    } catch {
+      setServices((prev) =>
+        prev.map((s) =>
+          s.id === service.id ? { ...s, isFeatured: !nowFeatured } : s
+        )
+      );
+      setBannerType("err");
+      setBanner("Update failed — please try again.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const featuredCount = services.filter(
+    (s) => s.isActive && s.isFeatured
+  ).length;
 
   const handleAdd = async ({ imageUrl, alt }) => {
     const sortOrder = images.length
@@ -75,7 +125,10 @@ export default function CarouselView() {
 
   return (
     <div>
-      <AdminTopBar title="Carousel" subtitle="Manage the home-page hero image carousel" />
+      <AdminTopBar
+        title="Carousel"
+        subtitle="Manage the home-page hero carousel and featured treatments"
+      />
 
       <Banner type={bannerType} message={banner} onDismiss={() => setBanner(null)} />
 
@@ -89,6 +142,30 @@ export default function CarouselView() {
           <EmptyState icon={Loader2} spin title="Loading carousel…" message="One moment." />
         ) : (
           <CarouselGrid images={images} onToggle={handleToggle} onRemove={handleRemove} />
+        )}
+      </div>
+
+      <div className="panel" style={{ marginTop: 22 }}>
+        <div className="panel-head">
+          <h3>Featured on home page</h3>
+          <span style={{ fontSize: 12, color: "var(--muted)" }}>
+            {featuredCount} of {FEATURED_LIMIT} chosen · shown under “Loved by
+            our clients”
+          </span>
+        </div>
+        {servicesLoading ? (
+          <EmptyState
+            icon={Loader2}
+            spin
+            title="Loading services…"
+            message="One moment."
+          />
+        ) : (
+          <FeaturedPicker
+            services={services}
+            onToggle={handleToggleFeatured}
+            busyId={busyId}
+          />
         )}
       </div>
     </div>

@@ -1,14 +1,42 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import Hero from "@/components/site/Hero";
 import Footer from "@/components/site/Footer";
 import ServiceCard from "@/components/services/ServiceCard";
 import StarRating from "@/components/reviews/StarRating";
 import Reveal from "@/components/site/Reveal";
-import { FEATURED_SERVICES } from "@/lib/services";
+import { ServiceGridSkeleton } from "@/components/site/Skeletons";
+import { FEATURED_SERVICES, getFeaturedServices } from "@/lib/services";
+
+// The hero carousel and the featured cards are both admin-managed, so render
+// per request — otherwise this page is a build-time snapshot and nothing Sruthi
+// changes ever reaches the live site. See app/services/page.jsx.
+export const dynamic = "force-dynamic";
+
+// Unlike /services, a failure here falls back to static cards rather than an
+// error panel: the landing page should always look intact, and these three
+// cards are marketing, not the source of truth.
+async function FeaturedGrid() {
+  let featured;
+  try {
+    featured = await getFeaturedServices();
+  } catch (err) {
+    console.error("getFeaturedServices failed:", err);
+    featured = FEATURED_SERVICES;
+  }
+
+  return (
+    <div className="svc-grid">
+      {featured.map((s, i) => (
+        <Reveal key={s.id ?? s.n} delay={i * 0.1}>
+          <ServiceCard service={s} withBook />
+        </Reveal>
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
-  const featured = FEATURED_SERVICES;
-
   return (
     <>
       <Hero />
@@ -23,13 +51,9 @@ export default function Home() {
               after a quick skin consultation.
             </p>
           </Reveal>
-          <div className="svc-grid">
-            {featured.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.1}>
-                <ServiceCard service={s} withBook />
-              </Reveal>
-            ))}
-          </div>
+          <Suspense fallback={<ServiceGridSkeleton count={3} filters={false} />}>
+            <FeaturedGrid />
+          </Suspense>
           <div style={{ textAlign: "center", marginTop: 36 }}>
             <Link
               className="btn-prev"

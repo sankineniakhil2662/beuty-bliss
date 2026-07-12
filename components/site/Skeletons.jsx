@@ -2,14 +2,17 @@
 // shell (nav, hero, form) streams instantly; only these areas show a skeleton
 // while data loads — so navigating between tabs never looks frozen.
 
-export function ServiceGridSkeleton({ count = 6 }) {
+// `filters` is off for the Home page's featured grid, which has no filter row.
+export function ServiceGridSkeleton({ count = 6, filters = true }) {
   return (
     <>
-      <div className="filters">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="skeleton sk-pill" />
-        ))}
-      </div>
+      {filters && (
+        <div className="filters">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="skeleton sk-pill" />
+          ))}
+        </div>
+      )}
       <div className="svc-grid">
         {Array.from({ length: count }).map((_, i) => (
           <div key={i} className="skeleton sk-card" />
