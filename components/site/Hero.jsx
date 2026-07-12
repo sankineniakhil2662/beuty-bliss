@@ -45,23 +45,34 @@ export default async function Hero() {
           <Reveal delay={0.15} y={16}>
             <div className="hero-stats">
               <div className="st">
-                <b>
-                  <CountUp value={15} suffix="+" />
-                </b>
-                <span>Treatments</span>
+                <div className="st-val">
+                  <span className="st-num">
+                    <CountUp value={15} suffix="+" />
+                  </span>
+                </div>
+                <span className="st-lbl">Treatments</span>
               </div>
               <div className="st">
-                <b style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <CountUp value={4.9} decimals={1} />{" "}
-                  <Star size={20} fill="currentColor" strokeWidth={0} />
-                </b>
-                <span>Client Rating</span>
+                <div className="st-val">
+                  <span className="st-num">
+                    <CountUp value={4.9} decimals={1} />
+                  </span>
+                  <Star
+                    className="st-star"
+                    size={22}
+                    fill="currentColor"
+                    strokeWidth={0}
+                  />
+                </div>
+                <span className="st-lbl">Client Rating</span>
               </div>
               <div className="st">
-                <b>
-                  <CountUp value={500} suffix="+" />
-                </b>
-                <span>Glowing Faces</span>
+                <div className="st-val">
+                  <span className="st-num">
+                    <CountUp value={500} suffix="+" />
+                  </span>
+                </div>
+                <span className="st-lbl">Glowing Faces</span>
               </div>
             </div>
           </Reveal>

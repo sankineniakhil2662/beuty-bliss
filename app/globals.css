@@ -104,9 +104,19 @@ a{color:inherit;text-decoration:none}
 .hero-carousel .hc-badge b{display:block;font-size:12.5px;color:var(--ink);font-weight:700;line-height:1.3;white-space:nowrap}
 .hero-carousel .hc-badge small{display:block;font-size:10.5px;color:var(--muted);white-space:nowrap}
 .hero-carousel .hc-tag{position:absolute;bottom:16px;left:16px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--rose-deep);font-size:11px;font-weight:600;letter-spacing:.3px;padding:7px 12px;border-radius:999px;box-shadow:0 8px 20px rgba(20,12,8,.18)}
-.hero-stats{display:flex;gap:30px;margin-top:46px}
-.hero-stats .st b{font-family:var(--font-inter),sans-serif;font-size:30px;color:var(--gold-light);display:block;font-weight:600}
-.hero-stats .st span{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#A99C90}
+/* Stat bar: one glass panel with gold hairline dividers, rather than three
+   loose number/label pairs floating on the hero background. */
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:52px;max-width:580px;padding:26px 10px;border-radius:var(--r);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015));border:1px solid rgba(201,162,39,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 16px 44px rgba(0,0,0,.28)}
+.hero-stats .st{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:2px 14px;text-align:center}
+.hero-stats .st + .st::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:58%;background:linear-gradient(180deg,transparent,rgba(201,162,39,.4),transparent)}
+.hero-stats .st-val{display:flex;align-items:center;justify-content:center;gap:6px;line-height:1}
+/* tabular-nums holds the width steady while CountUp animates, so the dividers
+   don't jitter as the numbers tick up. */
+.hero-stats .st-num{font-family:var(--font-inter),sans-serif;font-size:clamp(38px,4.4vw,54px);font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,var(--gold-light),var(--gold-soft) 45%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Colour is set here rather than inherited: the parent's transparent text
+   colour would otherwise make the star's currentColor fill invisible. */
+.hero-stats .st-star{color:var(--gold-light);flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(201,162,39,.45))}
+.hero-stats .st-lbl{font-size:11.5px;letter-spacing:2.2px;text-transform:uppercase;color:#B3A79B;font-weight:500;white-space:nowrap}
 
 .petal-divider{display:flex;align-items:center;justify-content:center;gap:16px;padding:30px 0;color:var(--rose)}
 .petal-divider::before,.petal-divider::after{content:"";height:1px;width:90px;background:linear-gradient(90deg,transparent,var(--rose-deep))}
@@ -459,7 +469,13 @@ table.booking tr:hover td{background:#fdfbf6}
   .svc-grid,.rev-grid{grid-template-columns:1fr}
   .kpi-row{grid-template-columns:1fr 1fr}
   .hero h1{font-size:38px}
-  .hero-stats{gap:18px;flex-wrap:wrap}
+  /* Stays a 3-up bar on phones — it reads as a unit, so wrapping one stat
+     onto its own line looks like a mistake. */
+  .hero-stats{margin-top:34px;max-width:none;padding:18px 2px}
+  .hero-stats .st{padding:2px 6px;gap:7px}
+  .hero-stats .st-num{font-size:30px}
+  .hero-stats .st-star{width:18px;height:18px}
+  .hero-stats .st-lbl{font-size:9.5px;letter-spacing:1.3px}
   .card-pad{padding:20px}
   .daygrid{gap:5px}
   .modrow{grid-template-columns:1fr}
