@@ -86,7 +86,7 @@ export default function StepDay({
           ← Back
         </button>
         <button className="btn-next" onClick={onReview}>
-          Review Request →
+          Continue →
         </button>
       </div>
     </div>

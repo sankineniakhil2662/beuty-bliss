@@ -4,7 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 
 // Step 5: confirmation screen. Ref number is generated client-side for now;
 // the real ref will come from the Firestore write next phase.
-export default function BookingSuccess({ firstName, email, bookingRef, onBackHome }) {
+export default function BookingSuccess({ firstName, bookingRef, onBackHome,phone }) {
   return (
     <div className="success-box">
       <div className="circle">
@@ -30,8 +30,9 @@ export default function BookingSuccess({ firstName, email, bookingRef, onBackHom
         <div className="ns">
           <div className="num">2</div>
           <div>
-            <b>Check your inbox</b>A confirmation email is on its way to{" "}
-            <span>{email}</span>.
+            <b>Check your inbox</b>A confirmation SMS is on its way to{" "}
+            <span>{phone}</span>.
+
           </div>
         </div>
         <div className="ns">

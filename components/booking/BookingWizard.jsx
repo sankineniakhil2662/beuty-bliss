@@ -55,6 +55,7 @@ export default function BookingWizard({ services, preselectService }) {
       : {}
   ); // { serviceName: qty }
   const [details, setDetails] = useState({ name: "", email: "", phone: "", age: "" });
+  console.log("=======", details);
   const [consultation, setConsultation] = useState(INITIAL_CONSULT);
   const [consultOpen, setConsultOpen] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -282,8 +283,8 @@ export default function BookingWizard({ services, preselectService }) {
 
               {step === 5 && (
                 <BookingSuccess
+                  phone={details.phone}
                   firstName={firstName}
-                  email={details.email}
                   bookingRef={bookingRef}
                   onBackHome={() => router.push("/")}
                 />
