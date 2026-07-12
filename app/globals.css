@@ -476,3 +476,11 @@ table.booking tr:hover td{background:#fdfbf6}
   .hero-carousel .hc-tag{bottom:10px;left:10px;padding:5px 10px;font-size:10px}
   .hero-carousel .hc-dots{bottom:10px;right:10px}
 }
+
+/* ===== skeleton loaders (route loading.jsx fallbacks) ===== */
+@keyframes skeleton-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.skeleton{background:linear-gradient(90deg,#e9ddcb,#f5eee2,#e9ddcb);background-size:200% 100%;border-radius:12px;animation:skeleton-pulse 1.4s ease-in-out infinite}
+.sk-card{height:330px;border-radius:var(--r)}
+.sk-rev{height:190px;border-radius:var(--r)}
+.sk-pill{width:92px;height:38px;border-radius:999px}
+.sk-line{height:14px;border-radius:6px}
