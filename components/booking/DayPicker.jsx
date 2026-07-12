@@ -3,8 +3,8 @@
 const DOW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 // Renders the calendar grid for the given year/month (0-indexed, same as
-// Date). Sundays, Mondays, and any day already in the past are disabled.
-// Selection state lives in BookingWizard.
+// Date). Only days already in the past are disabled — every future date,
+// including weekends, is bookable. Selection state lives in BookingWizard.
 export default function DayPicker({ year, month, selectedDate, onSelect }) {
   const cells = [];
   const now = new Date();
@@ -18,9 +18,7 @@ export default function DayPicker({ year, month, selectedDate, onSelect }) {
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(year, month, d).getDay();
-    const isPast = isCurrentMonth && d < todayDate;
-    const off = dow === 0 || dow === 1 || isPast;
+    const off = isCurrentMonth && d < todayDate;
     const isToday = isCurrentMonth && d === todayDate;
     const cls =
       "day" +

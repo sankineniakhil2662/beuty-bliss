@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import StepServices from "./StepServices";
@@ -49,6 +49,14 @@ export default function BookingWizard({ services, preselectService }) {
   const router = useRouter();
 
   const [step, setStep] = useState(1);
+
+  // Step changes are internal state, not route navigations, so Next.js's
+  // scroll-to-top-on-navigate behavior never fires for them. Reset scroll
+  // manually whenever the wizard moves to a new step.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [step]);
+
   const [cart, setCart] = useState(() =>
     preselectService && services.some((s) => s.n === preselectService)
       ? { [preselectService]: 1 }
@@ -63,12 +71,32 @@ export default function BookingWizard({ services, preselectService }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  // Single-month booking calendar: always the real current month (previously
+  // Booking calendar: defaults to the real current month (previously
   // hardcoded to July 2026, which would have silently broken every booking
-  // after that month). Computed once per mount.
+  // after that month), but the user can page forward/back with the
+  // chevrons. `now` is computed once per mount as the floor for navigation
+  // — you can't book into a month that's already passed.
   const now = useMemo(() => new Date(), []);
-  const bookingYear = now.getFullYear();
-  const bookingMonth = now.getMonth();
+  const [bookingYear, setBookingYear] = useState(now.getFullYear());
+  const [bookingMonth, setBookingMonth] = useState(now.getMonth());
+  const isEarliestMonth =
+    bookingYear === now.getFullYear() && bookingMonth === now.getMonth();
+
+  const changeMonth = (delta) => {
+    const next = new Date(bookingYear, bookingMonth + delta, 1);
+    if (
+      next.getFullYear() < now.getFullYear() ||
+      (next.getFullYear() === now.getFullYear() && next.getMonth() < now.getMonth())
+    ) {
+      return;
+    }
+    setBookingYear(next.getFullYear());
+    setBookingMonth(next.getMonth());
+    // The previously selected day belongs to the month being left; carrying
+    // its number over would silently point at a different date.
+    setSelectedDate(null);
+    setShowDayErr(false);
+  };
 
   // validation display flags
   const [showSvcErr, setShowSvcErr] = useState(false);
@@ -253,6 +281,9 @@ export default function BookingWizard({ services, preselectService }) {
                     setSelectedDate(d);
                     setShowDayErr(false);
                   }}
+                  onPrevMonth={() => changeMonth(-1)}
+                  onNextMonth={() => changeMonth(1)}
+                  canGoPrevMonth={!isEarliestMonth}
                   showError={showDayErr}
                   onBack={() => setStep(2)}
                   onReview={reviewFromDay}

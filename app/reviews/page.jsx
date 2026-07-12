@@ -2,7 +2,7 @@ import { MessageCircle } from "lucide-react";
 import SiteNav from "@/components/site/SiteNav";
 import RatingSummary from "@/components/reviews/RatingSummary";
 import ReviewCard from "@/components/reviews/ReviewCard";
-import ReviewForm from "@/components/reviews/ReviewForm";
+// import ReviewForm from "@/components/reviews/ReviewForm";
 import Reveal from "@/components/site/Reveal";
 import { getApprovedReviews } from "@/lib/reviews";
 
@@ -78,7 +78,7 @@ export default async function ReviewsPage() {
               marginRight: "auto",
             }}
           >
-            <ReviewForm />
+            {/* <ReviewForm /> */}
           </Reveal>
         </div>
       </div>

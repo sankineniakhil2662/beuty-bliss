@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { getServices } from "@/lib/services";
 

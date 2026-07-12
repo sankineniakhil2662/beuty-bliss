@@ -134,7 +134,7 @@ export default function StepConfirm({
           ← Back
         </button>
         <button className="btn-next" onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Sending…" : "Send Request"}
+          {submitting ? "Sending…" : "Confirm"}
         </button>
       </div>
     </div>
