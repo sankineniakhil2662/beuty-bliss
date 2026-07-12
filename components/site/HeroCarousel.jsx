@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { BadgeCheck, Sparkles, Star } from "lucide-react";
+import { BadgeCheck, Star } from "lucide-react";
 
 const INTERVAL_MS = 3000;
 
@@ -27,43 +27,47 @@ export default function HeroCarousel({ images }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {images.map((img, i) => (
-        <div key={img.id} className={"hc-slide" + (i === index ? " active" : "")}>
-          <Image
-            src={img.imageUrl}
-            alt={img.alt || "Beauty Bliss by Sruthi"}
-            fill
-            priority={i === 0}
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 580px) 520px, 380px"
-          />
+      {/* The media is clipped to the frame; the badges live outside it, so they
+          float over the frame edge instead of covering the artwork. */}
+      <div className="hc-frame">
+        <div className="hc-media">
+          {images.map((img, i) => (
+            <div
+              key={img.id}
+              className={"hc-slide" + (i === index ? " active" : "")}
+            >
+              {/* Blurred copy fills any gap left by `contain` below. The
+                  slides are square today, so it's invisible — it's what keeps
+                  a differently-shaped upload from letterboxing onto bare
+                  charcoal later. */}
+              <Image
+                src={img.imageUrl}
+                alt=""
+                aria-hidden="true"
+                fill
+                className="hc-fill"
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 980px) 90vw, 520px"
+              />
+              {/* `contain`, not `cover`: these are posters with text running to
+                  the edge, so nothing may be cropped. */}
+              <Image
+                src={img.imageUrl}
+                alt={img.alt || "Beauty Bliss by Sruthi"}
+                fill
+                priority={i === 0}
+                className="hc-photo"
+                style={{ objectFit: "contain" }}
+                sizes="(max-width: 980px) 90vw, 520px"
+              />
+            </div>
+          ))}
+
         </div>
-      ))}
-
-      <div className="hc-badge tl">
-        <span className="hc-badge-ic gold">
-          <BadgeCheck size={26} />
-        </span>
-        <span>
-          <b>Nurse-Led</b>
-          <small>Medical Aesthetics</small>
-        </span>
       </div>
 
-      <div className="hc-badge tr">
-        <span className="hc-badge-ic rose">
-          <Star size={14} fill="currentColor" strokeWidth={0} />
-        </span>
-        <span>
-          <b>4.9★ Rating</b>
-          <small>500+ Glowing Faces</small>
-        </span>
-      </div>
-
-      <div className="hc-tag">
-        <Sparkles size={12} /> Interactive
-      </div>
-
+      {/* Dots sit below the frame, not on it: each slide is a finished poster
+          with its own footer branding, so overlaying controls covers artwork. */}
       {images.length > 1 && (
         <div className="hc-dots">
           {images.map((img, i) => (
@@ -76,6 +80,26 @@ export default function HeroCarousel({ images }) {
           ))}
         </div>
       )}
+
+      <div className="hc-badge tl">
+        <span className="hc-badge-ic gold">
+          <BadgeCheck size={20} />
+        </span>
+        <span>
+          <b>Nurse-Led</b>
+          <small>Medical Aesthetics</small>
+        </span>
+      </div>
+
+      <div className="hc-badge br">
+        <span className="hc-badge-ic rose">
+          <Star size={14} fill="currentColor" strokeWidth={0} />
+        </span>
+        <span>
+          <b>4.9 Rating</b>
+          <small>500+ Glowing Faces</small>
+        </span>
+      </div>
     </div>
   );
 }

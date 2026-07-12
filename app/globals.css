@@ -87,23 +87,44 @@ a{color:inherit;text-decoration:none}
 .btn-ghost{border:1px solid rgba(201,162,39,.55);color:var(--gold-light);padding:15px 28px;border-radius:999px;font-weight:500;letter-spacing:1px;font-size:13px;transition:.2s}
 .btn-ghost:hover{background:rgba(201,162,39,.12)}
 .hero-logo{display:flex;justify-content:center}
-.hero-logo img{max-width:430px;width:100%;filter:drop-shadow(0 20px 50px rgba(201,162,39,.25))}
-.hero-carousel{position:relative;width:100%;max-width:400px;aspect-ratio:1/1;border-radius:20px;overflow:hidden;box-shadow:0 20px 50px rgba(201,162,39,.25)}
-.hero-carousel .hc-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+/* Direct child only: this sizes the fallback logo. The carousel also lives in
+   .hero-logo, and an unscoped `img` rule capped every slide at 430px wide —
+   which cropped the sides off each poster. */
+.hero-logo > img{max-width:430px;width:100%;filter:drop-shadow(0 20px 50px rgba(201,162,39,.25))}
+/* Hero carousel. The outer element does NOT clip: the badges are children of
+   it and hang off the frame edge, which is what keeps them from sitting on top
+   of the artwork inside each slide. Clipping happens on .hc-media instead. */
+.hero-carousel{position:relative;width:100%;max-width:520px;margin:0 auto}
+/* Ambient gold bloom behind the frame, so it sits in the dark hero instead of
+   being pasted onto it. */
+.hero-carousel::before{content:"";position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(closest-side,rgba(201,162,39,.30),rgba(232,165,152,.10) 55%,transparent 75%);filter:blur(16px);pointer-events:none;z-index:0}
+.hc-frame{position:relative;z-index:1;padding:10px;border-radius:30px;background:linear-gradient(150deg,rgba(232,198,107,.6),rgba(201,162,39,.10) 42%,rgba(232,165,152,.42));box-shadow:0 34px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.18)}
+.hc-media{position:relative;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:var(--charcoal2)}
+/* No zoom/scale here on purpose. The slides are posters with artwork running
+   to the edge, so any transform >1 crops the lettering off the sides. */
+.hero-carousel .hc-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s ease}
 .hero-carousel .hc-slide.active{opacity:1}
-.hero-carousel .hc-dots{position:absolute;bottom:16px;right:16px;display:flex;justify-content:flex-end;gap:6px;z-index:2}
-.hero-carousel .hc-dots button{width:7px;height:7px;border-radius:50%;background:rgba(15, 14, 14, 0.6);transition:.25s;border:none}
-.hero-carousel .hc-dots button.active{background:var(--rose-deep);width:18px;border-radius:4px}
+.hero-carousel .hc-fill{transform:scale(1.15);filter:blur(26px) saturate(1.15) brightness(.6)}
+.hero-carousel .hc-photo{z-index:1}
 
-.hero-carousel .hc-badge{position:absolute;z-index:2;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:14px;padding:9px 14px 9px 9px;box-shadow:0 8px 20px rgba(20,12,8,.18)}
-.hero-carousel .hc-badge.tl{top:16px;left:16px}
-.hero-carousel .hc-badge.tr{top:16px;right:16px}
-.hero-carousel .hc-badge-ic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
-.hero-carousel .hc-badge-ic.gold{background:linear-gradient(135deg,var(--gold),var(--gold-light))}
-.hero-carousel .hc-badge-ic.rose{background:linear-gradient(135deg,var(--rose),var(--rose-deep))}
-.hero-carousel .hc-badge b{display:block;font-size:12.5px;color:var(--ink);font-weight:700;line-height:1.3;white-space:nowrap}
-.hero-carousel .hc-badge small{display:block;font-size:10.5px;color:var(--muted);white-space:nowrap}
-.hero-carousel .hc-tag{position:absolute;bottom:16px;left:16px;z-index:2;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:var(--rose-deep);font-size:11px;font-weight:600;letter-spacing:.3px;padding:7px 12px;border-radius:999px;box-shadow:0 8px 20px rgba(20,12,8,.18)}
+/* Below the frame, on the dark hero — not floating over the poster. */
+.hero-carousel .hc-dots{position:relative;z-index:2;display:flex;justify-content:center;gap:8px;margin-top:20px}
+.hero-carousel .hc-dots button{width:8px;height:8px;padding:0;border-radius:999px;background:rgba(251,247,240,.28);transition:.25s;border:none}
+.hero-carousel .hc-dots button:hover{background:rgba(251,247,240,.6)}
+.hero-carousel .hc-dots button.active{width:26px;background:linear-gradient(90deg,var(--gold),var(--gold-light));box-shadow:0 2px 10px rgba(201,162,39,.5)}
+
+/* Dark glass rather than solid white: the old opaque cards read as stickers
+   slapped on the photo. */
+.hero-carousel .hc-badge{position:absolute;z-index:4;display:flex;align-items:center;gap:10px;background:rgba(26,22,20,.72);backdrop-filter:blur(14px);border:1px solid rgba(201,162,39,.35);border-radius:16px;padding:10px 16px 10px 10px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+/* Offset diagonally and pulled outside the frame, so neither one lands on the
+   middle of a slide. */
+.hero-carousel .hc-badge.tl{top:12%;left:-30px}
+.hero-carousel .hc-badge.br{bottom:14%;right:-30px}
+.hero-carousel .hc-badge-ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.hero-carousel .hc-badge-ic.gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));box-shadow:0 6px 16px rgba(201,162,39,.45)}
+.hero-carousel .hc-badge-ic.rose{background:linear-gradient(135deg,var(--rose),var(--rose-deep));box-shadow:0 6px 16px rgba(201,123,110,.45)}
+.hero-carousel .hc-badge b{display:block;font-size:13px;color:var(--cream);font-weight:700;line-height:1.3;white-space:nowrap}
+.hero-carousel .hc-badge small{display:block;font-size:10.5px;color:#B3A79B;white-space:nowrap}
 /* Stat bar: one glass panel with gold hairline dividers, rather than three
    loose number/label pairs floating on the hero background. */
 .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:52px;max-width:580px;padding:26px 10px;border-radius:var(--r);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015));border:1px solid rgba(201,162,39,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 16px 44px rgba(0,0,0,.28)}
@@ -436,7 +457,8 @@ table.booking tr:hover td{background:#fdfbf6}
 @media(max-width:980px){
   .hero-inner{grid-template-columns:1fr;gap:34px}
   .hero-logo{order:-1}.hero-logo img{max-width:300px}
-  .hero-carousel{max-width:340px}
+  /* Tablet: the hero stacks, so the carousel gets the full column width. */
+  .hero-carousel{max-width:440px}
   .svc-grid,.rev-grid{grid-template-columns:1fr 1fr}
   .book-shell{grid-template-columns:1fr}
   .about-grid{grid-template-columns:1fr}
@@ -482,15 +504,18 @@ table.booking tr:hover td{background:#fdfbf6}
   .field input,.field select,.field textarea{font-size:16px}
   .admin-main{padding:18px 16px}
   .admin-top h1{font-size:24px}
-  .hero-carousel .hc-badge{gap:6px;padding:6px 10px 6px 6px;border-radius:11px}
-  .hero-carousel .hc-badge.tl{top:10px;left:10px}
-  .hero-carousel .hc-badge.tr{top:10px;right:10px}
-  .hero-carousel .hc-badge-ic{width:20px;height:20px}
-  .hero-carousel .hc-badge-ic svg{width:12px;height:12px}
-  .hero-carousel .hc-badge b{font-size:10.5px}
+  /* Phones: pull the badges back inside the frame — at this width the desktop
+     -30px overhang would hang off the edge of the screen. */
+  .hc-frame{padding:7px;border-radius:24px}
+  .hc-media{border-radius:18px}
+  .hero-carousel .hc-badge{gap:7px;padding:7px 12px 7px 7px;border-radius:12px}
+  .hero-carousel .hc-badge.tl{top:12px;left:12px}
+  .hero-carousel .hc-badge.br{bottom:12px;right:12px}
+  .hero-carousel .hc-badge-ic{width:24px;height:24px}
+  .hero-carousel .hc-badge-ic svg{width:13px;height:13px}
+  .hero-carousel .hc-badge b{font-size:11px}
   .hero-carousel .hc-badge small{display:none}
-  .hero-carousel .hc-tag{bottom:10px;left:10px;padding:5px 10px;font-size:10px}
-  .hero-carousel .hc-dots{bottom:10px;right:10px}
+  .hero-carousel .hc-dots{margin-top:16px}
 }
 
 /* ===== skeleton loaders (route loading.jsx fallbacks) ===== */
