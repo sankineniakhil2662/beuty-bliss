@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Mail, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -28,14 +29,19 @@ export default function Footer() {
           <h4>Visit</h4>
           <p>9216 187 Street NW</p>
           <p>Edmonton, AB · T5T 1S3</p>
-          <p>📱 306-241-5599</p>
-          <p>✉️ sruthi.vlcc@gmail.com</p>
+          <p style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Phone size={13} /> 306-241-5599
+          </p>
+          <p style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Mail size={13} /> sruthi.vlcc@gmail.com
+          </p>
         </div>
         <div>
           <h4>Explore</h4>
           <Link href="/services">Services &amp; Pricing</Link>
           <Link href="/book">Book Appointment</Link>
           <Link href="/reviews">Client Reviews</Link>
+          <Link href="/about">About Us</Link>
           <a>Instagram</a>
           <a>Facebook</a>
         </div>

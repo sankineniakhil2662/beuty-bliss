@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ChevronDown, Sparkles } from "lucide-react";
 import ConsultationForm from "./ConsultationForm";
 
 // fieldState[x] is one of: undefined/null (untouched), "ok", "error".
@@ -39,7 +40,9 @@ export default function StepDetails({
           value={details.name}
           onChange={(e) => onDetailChange("name", e.target.value)}
         />
-        <div className="errmsg">⚠ Please enter your full name</div>
+        <div className="errmsg">
+          <AlertTriangle size={12} /> Please enter your full name
+        </div>
       </div>
 
       <div
@@ -58,7 +61,9 @@ export default function StepDetails({
             value={details.email}
             onChange={(e) => onDetailChange("email", e.target.value)}
           />
-          <div className="errmsg">⚠ Enter a valid email</div>
+          <div className="errmsg">
+            <AlertTriangle size={12} /> Enter a valid email
+          </div>
         </div>
         <div className={fieldClass(fieldState.phone)}>
           <label>
@@ -69,7 +74,9 @@ export default function StepDetails({
             value={details.phone}
             onChange={(e) => onDetailChange("phone", e.target.value)}
           />
-          <div className="errmsg">⚠ Enter a valid phone</div>
+          <div className="errmsg">
+            <AlertTriangle size={12} /> Enter a valid phone
+          </div>
         </div>
         <div className="field">
           <label>Age</label>
@@ -86,12 +93,16 @@ export default function StepDetails({
         onClick={onToggleConsult}
       >
         <div>
-          <b>✨ Facial Consultation Form</b>
+          <b style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <Sparkles size={14} /> Facial Consultation Form
+          </b>
           <span style={{ display: "block" }}>
             Helps Sruthi tailor your treatment safely. Takes ~1 minute.
           </span>
         </div>
-        <div className="chev">▾</div>
+        <div className="chev">
+          <ChevronDown size={18} />
+        </div>
       </div>
 
       {consultOpen && (

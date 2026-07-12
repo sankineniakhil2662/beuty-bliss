@@ -1,9 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { SearchX } from "lucide-react";
 import ServiceCard from "./ServiceCard";
 import ServiceFilters from "./ServiceFilters";
 import { CATEGORIES } from "@/lib/constants";
+
+// Stagger container/item pair — replays whenever `active` changes (the grid
+// is keyed by it below), so switching category filters re-triggers the
+// cascade instead of only animating on first mount.
+const gridVariants = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
 
 // Client wrapper that owns the active-category state and renders the filter
 // pills + service grid + empty state. Services are fetched on the server and
@@ -23,14 +34,24 @@ export default function ServicesBrowser({ services }) {
         onSelect={setActive}
       />
       {list.length ? (
-        <div className="svc-grid">
+        <motion.div
+          key={active}
+          className="svc-grid"
+          variants={gridVariants}
+          initial="hidden"
+          animate="show"
+        >
           {list.map((s) => (
-            <ServiceCard key={s.id ?? s.n} service={s} withBook />
+            <motion.div key={s.id ?? s.n} variants={cardVariants}>
+              <ServiceCard service={s} withBook />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
         <div className="empty" style={{ gridColumn: "1/-1" }}>
-          <div className="ic">🔍</div>
+          <div className="ic">
+            <SearchX size={48} strokeWidth={1.5} />
+          </div>
           <h3>No services here yet</h3>
           <p>Try another category — new treatments are added often.</p>
         </div>

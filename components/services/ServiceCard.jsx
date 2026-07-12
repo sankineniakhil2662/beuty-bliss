@@ -4,6 +4,7 @@ import { ICONS } from "@/lib/constants";
 
 export default function ServiceCard({ service, withBook = false }) {
   const s = service;
+  const CatIcon = ICONS[s.cat];
   return (
     <div className="svc-card">
       <div className="svc-thumb">
@@ -16,7 +17,7 @@ export default function ServiceCard({ service, withBook = false }) {
             sizes="(max-width: 620px) 100vw, (max-width: 980px) 50vw, 33vw"
           />
         ) : (
-          <span className="ic">{ICONS[s.cat]}</span>
+          <span className="ic">{CatIcon && <CatIcon size={40} strokeWidth={1.5} />}</span>
         )}
         {s.deal && <span className="deal">{s.deal}</span>}
         <span className="pricepill">CA${s.price}</span>
@@ -34,7 +35,10 @@ export default function ServiceCard({ service, withBook = false }) {
           {s.was && <span className="was">CA${s.was}</span>}
         </div>
         {withBook && (
-          <Link className="book-mini" href="/book">
+          <Link
+            className="book-mini"
+            href={`/book?service=${encodeURIComponent(s.n)}`}
+          >
             Book this
           </Link>
         )}

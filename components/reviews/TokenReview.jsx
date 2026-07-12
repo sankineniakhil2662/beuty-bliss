@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { AlertTriangle, Check, CheckCircle2, Lock } from "lucide-react";
 import StarPicker from "./StarPicker";
 import { getFirebaseStorage } from "@/lib/firebase";
 
@@ -112,7 +113,16 @@ export default function TokenReview({ token }) {
 
         {status === "invalid" && (
           <div className="card card-pad" style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                color: "var(--rose-deep)",
+                marginBottom: 10,
+              }}
+            >
+              <Lock size={40} strokeWidth={1.5} />
+            </div>
             <h3 className="serif" style={{ fontSize: 24, marginBottom: 8 }}>
               Link not valid
             </h3>
@@ -126,7 +136,9 @@ export default function TokenReview({ token }) {
         {status === "done" && (
           <div className="card card-pad">
             <div className="success-box">
-              <div className="circle">✓</div>
+              <div className="circle">
+                <CheckCircle2 size={44} strokeWidth={1.5} />
+              </div>
               <h2>Thank you!</h2>
               <p>
                 Your review has been submitted. It appears on the site once
@@ -146,9 +158,13 @@ export default function TokenReview({ token }) {
                 color: "var(--rose-deep)",
                 fontWeight: 600,
                 marginBottom: 6,
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
               }}
             >
-              ✓ Verified client{info.ref ? ` · ${info.ref}` : ""}
+              <Check size={13} /> Verified client
+              {info.ref ? ` · ${info.ref}` : ""}
             </div>
             <h3 className="serif" style={{ fontSize: 26, marginBottom: 6 }}>
               Leave your review
@@ -201,7 +217,7 @@ export default function TokenReview({ token }) {
 
             {error && (
               <div className="banner err" style={{ fontSize: 12.5 }}>
-                ⚠ {error}
+                <AlertTriangle size={16} /> {error}
               </div>
             )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import BookingTable from "./BookingTable";
 import TabPills from "./TabPills";
@@ -137,7 +138,7 @@ export default function BookingsView() {
           <TabPills tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
         {loading ? (
-          <EmptyState icon="⏳" title="Loading bookings…" message="One moment." />
+          <EmptyState icon={Loader2} spin title="Loading bookings…" message="One moment." />
         ) : (
           <BookingTable bookings={visible} onAction={handleAction} />
         )}

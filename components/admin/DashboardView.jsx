@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CheckCircle2, DollarSign, Flame, Star } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import KpiCard from "./KpiCard";
 import BookingTable from "./BookingTable";
@@ -39,25 +40,29 @@ export default function DashboardView() {
 
       <div className="kpi-row">
         <KpiCard
-          label="🔥 New Requests"
+          icon={Flame}
+          label="New Requests"
           value={String(requested.length)}
           delta="Awaiting your response"
           deltaType="up"
         />
         <KpiCard
-          label="✅ Confirmed"
+          icon={CheckCircle2}
+          label="Confirmed"
           value={String(confirmed)}
           delta="Upcoming"
           deltaType="flat"
         />
         <KpiCard
-          label="⭐ Pending Reviews"
+          icon={Star}
+          label="Pending Reviews"
           value={String(pendingReviews)}
           delta="Awaiting approval"
           deltaType="up"
         />
         <KpiCard
-          label="💰 Est. Revenue"
+          icon={DollarSign}
+          label="Est. Revenue"
           value={`$${revenue.toLocaleString()}`}
           delta="confirmed + completed"
           accent

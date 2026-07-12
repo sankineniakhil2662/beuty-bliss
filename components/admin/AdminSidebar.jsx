@@ -3,14 +3,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Calendar, Flower2, Images, LayoutDashboard, Settings, Star } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 // Badges are static (from the mockup) until wired to live counts in Part B.
 const NAV = [
-  { href: "/admin", icon: "📊", label: "Dashboard" },
-  { href: "/admin/bookings", icon: "📅", label: "Bookings", badge: "5" },
-  { href: "/admin/reviews", icon: "⭐", label: "Reviews", badge: "3" },
-  { href: "/admin/services", icon: "🌸", label: "Services" },
+  { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/admin/bookings", icon: Calendar, label: "Bookings", badge: "5" },
+  { href: "/admin/reviews", icon: Star, label: "Reviews", badge: "3" },
+  { href: "/admin/services", icon: Flower2, label: "Services" },
+  { href: "/admin/carousel", icon: Images, label: "Carousel" },
 ];
 
 export default function AdminSidebar() {
@@ -47,13 +49,19 @@ export default function AdminSidebar() {
               href={item.href}
               className={active ? "active" : undefined}
             >
-              <span className="ico">{item.icon}</span> {item.label}
+              <span className="ico">
+                <item.icon size={16} strokeWidth={1.75} />
+              </span>{" "}
+              {item.label}
               {item.badge && <span className="badge">{item.badge}</span>}
             </Link>
           );
         })}
         <a>
-          <span className="ico">⚙️</span> Settings
+          <span className="ico">
+            <Settings size={16} strokeWidth={1.75} />
+          </span>{" "}
+          Settings
         </a>
       </nav>
 

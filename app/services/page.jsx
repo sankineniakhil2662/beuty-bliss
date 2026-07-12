@@ -1,5 +1,6 @@
 import SiteNav from "@/components/site/SiteNav";
 import ServicesBrowser from "@/components/services/ServicesBrowser";
+import Reveal from "@/components/site/Reveal";
 import { getServices } from "@/lib/services";
 
 export default async function ServicesPage() {
@@ -14,9 +15,9 @@ export default async function ServicesPage() {
 
   return (
     <>
+      <SiteNav />
       <div className="hero" style={{ paddingBottom: 0 }}>
-        <SiteNav />
-        <div
+        <Reveal
           style={{
             maxWidth: 1180,
             margin: "0 auto",
@@ -39,7 +40,7 @@ export default async function ServicesPage() {
             All prices in CAD. Pay in person after your treatment — no online
             payment needed.
           </p>
-        </div>
+        </Reveal>
       </div>
 
       <div className="wrap">

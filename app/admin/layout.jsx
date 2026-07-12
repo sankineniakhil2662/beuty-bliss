@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Wrench } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
@@ -35,8 +36,8 @@ export default function AdminLayout({ children }) {
         <AdminSidebar />
         <main className="admin-main">
           <div className="banner ok" style={{ fontSize: 12.5 }}>
-            🛠 Dev preview — login bypassed (Firebase not configured). Screens
-            show sample data.
+            <Wrench size={15} /> Dev preview — login bypassed (Firebase not
+            configured). Screens show sample data.
           </div>
           {children}
         </main>

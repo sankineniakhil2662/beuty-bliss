@@ -1,3 +1,5 @@
+import { Search } from "lucide-react";
+
 // Reusable `.admin-top` heading + a single right-hand slot, shared across
 // every admin screen. That slot is either a search box (Dashboard/Bookings/
 // Reviews) or a custom `action` node (Services' "+ Add Service" button) —
@@ -15,7 +17,7 @@ export default function AdminTopBar({ title, subtitle, searchPlaceholder, action
         ? action
         : searchPlaceholder && (
             <div className="admin-search">
-              🔍 <input placeholder={searchPlaceholder} />
+              <Search size={14} /> <input placeholder={searchPlaceholder} />
             </div>
           )}
     </div>

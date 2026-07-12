@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ChevronLeft, ChevronRight, Circle, X } from "lucide-react";
 import DayPicker from "./DayPicker";
 
 // Step 3: pick a preferred day within the current month. The prev/next
@@ -37,13 +38,13 @@ export default function StepDay({
         }}
       >
         <button className="btn-prev" style={{ padding: "8px 14px", fontSize: 12 }}>
-          ‹
+          <ChevronLeft size={14} />
         </button>
         <b className="serif" style={{ fontSize: 22 }}>
           {monthLabel}
         </b>
         <button className="btn-prev" style={{ padding: "8px 14px", fontSize: 12 }}>
-          ›
+          <ChevronRight size={14} />
         </button>
       </div>
 
@@ -63,14 +64,20 @@ export default function StepDay({
           color: "var(--muted)",
         }}
       >
-        <span>🟡 Selected</span>
-        <span>⚪ Available</span>
-        <span>❌ Closed (Sun/Mon)</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <Circle size={10} fill="var(--gold)" color="var(--gold)" /> Selected
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <Circle size={10} color="#cabfb3" /> Available
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <X size={12} color="#cabfb3" /> Closed (Sun/Mon)
+        </span>
       </div>
 
       {showError && (
         <div className="banner err" style={{ marginTop: 16 }}>
-          ⚠ Please select a day to continue.
+          <AlertTriangle size={16} /> Please select a day to continue.
         </div>
       )}
 

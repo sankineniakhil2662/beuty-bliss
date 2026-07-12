@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import ServiceAdminTable from "./ServiceAdminTable";
 import ServiceForm from "./ServiceForm";
@@ -106,7 +107,7 @@ export default function ServicesView() {
           <h3>Your treatments</h3>
         </div>
         {loading ? (
-          <EmptyState icon="⏳" title="Loading services…" message="One moment." />
+          <EmptyState icon={Loader2} spin title="Loading services…" message="One moment." />
         ) : (
           <ServiceAdminTable
             services={services}

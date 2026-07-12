@@ -1,7 +1,9 @@
+import { MessageCircle } from "lucide-react";
 import SiteNav from "@/components/site/SiteNav";
 import RatingSummary from "@/components/reviews/RatingSummary";
 import ReviewCard from "@/components/reviews/ReviewCard";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import Reveal from "@/components/site/Reveal";
 import { getApprovedReviews } from "@/lib/reviews";
 
 export default async function ReviewsPage() {
@@ -14,9 +16,9 @@ export default async function ReviewsPage() {
 
   return (
     <>
+      <SiteNav />
       <div className="hero" style={{ paddingBottom: 0 }}>
-        <SiteNav />
-        <div
+        <Reveal
           style={{
             maxWidth: 1180,
             margin: "0 auto",
@@ -39,22 +41,28 @@ export default async function ReviewsPage() {
             Only clients who completed a treatment can leave a review — so every
             word here is real.
           </p>
-        </div>
+        </Reveal>
       </div>
 
       <div className="wrap">
         <div className="section">
-          <RatingSummary />
+          <Reveal>
+            <RatingSummary />
+          </Reveal>
 
           {reviews.length ? (
             <div className="rev-grid">
-              {reviews.map((r) => (
-                <ReviewCard key={r.id ?? r.nm} review={r} />
+              {reviews.map((r, i) => (
+                <Reveal key={r.id ?? r.nm} delay={i * 0.08}>
+                  <ReviewCard review={r} />
+                </Reveal>
               ))}
             </div>
           ) : (
             <div className="empty">
-              <div className="ic">💬</div>
+              <div className="ic">
+                <MessageCircle size={48} strokeWidth={1.5} />
+              </div>
               <h3>No reviews yet</h3>
               <p>
                 Verified reviews appear here after clients complete a treatment.
@@ -62,7 +70,7 @@ export default async function ReviewsPage() {
             </div>
           )}
 
-          <div
+          <Reveal
             style={{
               marginTop: 50,
               maxWidth: 560,
@@ -71,7 +79,7 @@ export default async function ReviewsPage() {
             }}
           >
             <ReviewForm />
-          </div>
+          </Reveal>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import ReviewModeration from "./ReviewModeration";
 import TabPills from "./TabPills";
@@ -84,7 +85,7 @@ export default function ReviewsView() {
           <TabPills tabs={TABS} active={activeTab} onChange={setActiveTab} />
         </div>
         {loading ? (
-          <EmptyState icon="⏳" title="Loading reviews…" message="One moment." />
+          <EmptyState icon={Loader2} spin title="Loading reviews…" message="One moment." />
         ) : (
           <ReviewModeration reviews={visible} onAction={handleAction} />
         )}
