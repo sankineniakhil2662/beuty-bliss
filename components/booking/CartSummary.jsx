@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MapPin, Phone, Sparkles } from "lucide-react";
 
 const HEADER = {
@@ -40,6 +41,17 @@ export default function CartSummary({ lines, count, total }) {
           ) : (
             lines.map((l) => (
               <div key={l.name} className="cart-line">
+                {l.imageUrl && (
+                  <div className="cl-ic">
+                    <Image
+                      src={l.imageUrl}
+                      alt=""
+                      fill
+                      sizes="38px"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                )}
                 <div className="cl-name">
                   {l.name}
                   <small>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ICONS } from "@/lib/constants";
 
 // One selectable service row. Shows "+ Add" until added, then a +/- stepper.
@@ -8,7 +9,21 @@ export default function ServicePickRow({ service, qty, onAdd, onInc, onDec }) {
   const CatIcon = ICONS[s.cat];
   return (
     <div className={"svc-pick-row" + (qty > 0 ? " on" : "")}>
-      <div className="sp-ic">{CatIcon && <CatIcon size={20} strokeWidth={1.5} />}</div>
+      {/* The service's own photo, same one the Services page shows. Falls back
+          to the category icon for a service added without an image. */}
+      <div className="sp-ic">
+        {s.imageUrl ? (
+          <Image
+            src={s.imageUrl}
+            alt=""
+            fill
+            sizes="52px"
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          CatIcon && <CatIcon size={20} strokeWidth={1.5} />
+        )}
+      </div>
       <div className="sp-info">
         <b>{s.n}</b>
         <span>

@@ -81,11 +81,14 @@ export default function BookingWizard({ services, preselectService }) {
     () => Object.fromEntries(services.map((s) => [s.n, s])),
     [services]
   );
+  // `imageUrl` is for the summary thumbnails only — the booking written to
+  // Firestore picks its fields explicitly (see the submit handler below).
   const lines = Object.keys(cart).map((n) => ({
     name: n,
     price: byName[n].price,
     qty: cart[n],
     sub: byName[n].price * cart[n],
+    imageUrl: byName[n].imageUrl ?? null,
   }));
   const count = lines.reduce((a, l) => a + l.qty, 0);
   const total = lines.reduce((a, l) => a + l.sub, 0);
