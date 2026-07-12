@@ -197,6 +197,11 @@ a{color:inherit;text-decoration:none}
 
 /* ===== booking form ===== */
 .book-shell{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
+/* Grid items default to min-width:auto, i.e. they refuse to shrink below their
+   content's minimum. One wide row inside the card then pushes the whole grid
+   past the viewport. min-width:0 lets the column shrink and makes the children
+   wrap instead. */
+.book-shell > *{min-width:0}
 .card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid #efe6d8}
 .card-pad{padding:32px}
 
@@ -499,6 +504,20 @@ table.booking tr:hover td{background:#fdfbf6}
   .hero-stats .st-star{width:18px;height:18px}
   .hero-stats .st-lbl{font-size:9.5px;letter-spacing:1.3px}
   .card-pad{padding:20px}
+  /* Icon + name on the first line, price + quantity on the second. Kept on one
+     line, this row's minimum width (~364px) exceeds a 360px phone and drags the
+     whole booking grid off-screen. */
+  .svc-pick-row{flex-wrap:wrap;row-gap:12px;gap:12px}
+  .svc-pick-row .sp-info{flex:1 1 auto;min-width:0}
+  .svc-pick-row .sp-price{margin-left:58px}
+  .svc-pick-row .stepper,.svc-pick-row .sp-add{margin-left:auto}
+  /* 4 steps across a phone: shrink the circles and labels rather than let the
+     bar set a floor the card can't go under. */
+  .form-step-bar{margin-bottom:24px}
+  .form-step-bar .stp{padding-bottom:10px}
+  .form-step-bar .stp .n{width:28px;height:28px;font-size:12.5px;margin-bottom:6px}
+  .form-step-bar .stp span{font-size:9px;letter-spacing:.3px}
+  .form-step-bar .stp::after{top:14px}
   .daygrid{gap:5px}
   .modrow{grid-template-columns:1fr}
   .field input,.field select,.field textarea{font-size:16px}
