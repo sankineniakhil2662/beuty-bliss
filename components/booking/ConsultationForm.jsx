@@ -1,5 +1,7 @@
 "use client";
 
+import { ClipboardList, Flower2, Leaf, Lock, Stethoscope, Target } from "lucide-react";
+
 const CONCERNS = [
   "Acne / breakouts",
   "Acne scars",
@@ -51,7 +53,7 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
       {/* skin concerns */}
       <div className="cgroup">
         <div className="ctitle">
-          🌸 Skin Concerns{" "}
+          <Flower2 size={14} /> Skin Concerns{" "}
           <span
             style={{
               textTransform: "none",
@@ -89,7 +91,9 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
 
       {/* medical history */}
       <div className="cgroup">
-        <div className="ctitle">🩺 Medical History</div>
+        <div className="ctitle">
+          <Stethoscope size={14} /> Medical History
+        </div>
 
         <div className="qa">
           <div className="qtext">Are you pregnant or breastfeeding?</div>
@@ -134,7 +138,9 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
 
       {/* skin history */}
       <div className="cgroup">
-        <div className="ctitle">📋 Skin History</div>
+        <div className="ctitle">
+          <ClipboardList size={14} /> Skin History
+        </div>
         <div className="qa">
           <div className="qtext">
             <span className="qn">5.</span>Used isotretinoin (Accutane) in the
@@ -173,7 +179,9 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
 
       {/* lifestyle */}
       <div className="cgroup">
-        <div className="ctitle">🌿 Lifestyle</div>
+        <div className="ctitle">
+          <Leaf size={14} /> Lifestyle
+        </div>
         <div className="qa" style={{ borderBottom: "1px solid #f1ebe1" }}>
           <div className="qtext">
             <span className="qn">10.</span>How much water do you drink daily?
@@ -218,7 +226,9 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
 
       {/* goals */}
       <div className="cgroup" style={{ marginBottom: 6 }}>
-        <div className="ctitle">🎯 Goals</div>
+        <div className="ctitle">
+          <Target size={14} /> Goals
+        </div>
         <div className="qtext" style={{ marginBottom: 10 }}>
           <span className="qn">13.</span>What would you like to achieve from
           today&apos;s treatment?
@@ -238,9 +248,18 @@ export default function ConsultationForm({ value: c, onChange, onToggleConcern }
           onChange={(e) => onChange("goals", e.target.value)}
         />
       </div>
-      <p className="hint" style={{ marginBottom: 6 }}>
-        🔒 By continuing you confirm the information is true. Results vary from
-        person to person. You&apos;ll sign the consent at your visit.
+      <p
+        className="hint"
+        style={{
+          marginBottom: 6,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 6,
+        }}
+      >
+        <Lock size={13} style={{ flexShrink: 0, marginTop: 2 }} /> By continuing
+        you confirm the information is true. Results vary from person to
+        person. You&apos;ll sign the consent at your visit.
       </p>
     </div>
   );

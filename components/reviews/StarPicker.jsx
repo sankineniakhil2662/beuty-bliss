@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Star } from "lucide-react";
 
 // Interactive 1–5 star rating. Controlled: `value` + `onChange(v)`.
 export default function StarPicker({ value, onChange }) {
@@ -9,19 +10,20 @@ export default function StarPicker({ value, onChange }) {
 
   return (
     <div
-      style={{ fontSize: 30, letterSpacing: 6, color: "var(--gold)", cursor: "pointer" }}
+      style={{ display: "inline-flex", gap: 6, cursor: "pointer" }}
       onMouseLeave={() => setHover(0)}
     >
       {[1, 2, 3, 4, 5].map((v) => (
-        <span
+        <Star
           key={v}
           data-v={v}
-          style={{ color: v <= active ? "var(--gold)" : "#e0d6c8" }}
+          size={30}
+          color={v <= active ? "var(--gold)" : "#e0d6c8"}
+          fill={v <= active ? "var(--gold)" : "none"}
+          strokeWidth={v <= active ? 0 : 1.5}
           onMouseEnter={() => setHover(v)}
           onClick={() => onChange(v)}
-        >
-          ★
-        </span>
+        />
       ))}
     </div>
   );

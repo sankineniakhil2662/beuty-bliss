@@ -5,9 +5,10 @@ import { ICONS } from "@/lib/constants";
 // One selectable service row. Shows "+ Add" until added, then a +/- stepper.
 export default function ServicePickRow({ service, qty, onAdd, onInc, onDec }) {
   const s = service;
+  const CatIcon = ICONS[s.cat];
   return (
     <div className={"svc-pick-row" + (qty > 0 ? " on" : "")}>
-      <div className="sp-ic">{ICONS[s.cat]}</div>
+      <div className="sp-ic">{CatIcon && <CatIcon size={20} strokeWidth={1.5} />}</div>
       <div className="sp-info">
         <b>{s.n}</b>
         <span>

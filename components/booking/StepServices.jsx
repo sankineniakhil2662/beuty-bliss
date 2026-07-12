@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import ServicePickRow from "./ServicePickRow";
 
 // Step 1: multi-service picker. All cart state lives in BookingWizard.
@@ -37,7 +38,8 @@ export default function StepServices({
 
       {showError && (
         <div className="banner err" style={{ marginTop: 14 }}>
-          ⚠ Please add at least one service to continue.
+          <AlertTriangle size={16} /> Please add at least one service to
+          continue.
         </div>
       )}
 

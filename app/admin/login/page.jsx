@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { AlertTriangle } from "lucide-react";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -107,7 +108,7 @@ export default function AdminLoginPage() {
           </div>
           {error && (
             <div className="banner err" style={{ fontSize: 12.5 }}>
-              ⚠ {error}
+              <AlertTriangle size={16} /> {error}
             </div>
           )}
           <button

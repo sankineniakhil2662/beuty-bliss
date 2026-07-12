@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import StepServices from "./StepServices";
 import StepDetails from "./StepDetails";
 import StepDay from "./StepDay";
@@ -41,11 +42,18 @@ const INITIAL_CONSULT = {
 
 // The booking wizard owns ALL state for the flow. Step components are
 // presentational and receive state + callbacks as props.
-export default function BookingWizard({ services }) {
+// `preselectService` (a service name from a "Book this" link's ?service=
+// query param) seeds the cart so the user doesn't have to find it again in
+// the list — only applied if it actually matches a real service.
+export default function BookingWizard({ services, preselectService }) {
   const router = useRouter();
 
   const [step, setStep] = useState(1);
-  const [cart, setCart] = useState({}); // { serviceName: qty }
+  const [cart, setCart] = useState(() =>
+    preselectService && services.some((s) => s.n === preselectService)
+      ? { [preselectService]: 1 }
+      : {}
+  ); // { serviceName: qty }
   const [details, setDetails] = useState({ name: "", email: "", phone: "", age: "" });
   const [consultation, setConsultation] = useState(INITIAL_CONSULT);
   const [consultOpen, setConsultOpen] = useState(true);
@@ -201,74 +209,84 @@ export default function BookingWizard({ services }) {
             ))}
           </div>
 
-          {step === 1 && (
-            <StepServices
-              services={services}
-              cart={cart}
-              onAdd={addSvc}
-              onInc={incSvc}
-              onDec={decSvc}
-              showError={showSvcErr}
-              onContinue={continueFromServices}
-            />
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -16 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {step === 1 && (
+                <StepServices
+                  services={services}
+                  cart={cart}
+                  onAdd={addSvc}
+                  onInc={incSvc}
+                  onDec={decSvc}
+                  showError={showSvcErr}
+                  onContinue={continueFromServices}
+                />
+              )}
 
-          {step === 2 && (
-            <StepDetails
-              details={details}
-              onDetailChange={setDetail}
-              fieldState={fieldState}
-              consultation={consultation}
-              onConsultChange={setConsult}
-              onToggleConcern={toggleConcern}
-              consultOpen={consultOpen}
-              onToggleConsult={() => setConsultOpen((o) => !o)}
-              onBack={() => setStep(1)}
-              onContinue={continueFromDetails}
-            />
-          )}
+              {step === 2 && (
+                <StepDetails
+                  details={details}
+                  onDetailChange={setDetail}
+                  fieldState={fieldState}
+                  consultation={consultation}
+                  onConsultChange={setConsult}
+                  onToggleConcern={toggleConcern}
+                  consultOpen={consultOpen}
+                  onToggleConsult={() => setConsultOpen((o) => !o)}
+                  onBack={() => setStep(1)}
+                  onContinue={continueFromDetails}
+                />
+              )}
 
-          {step === 3 && (
-            <StepDay
-              year={bookingYear}
-              month={bookingMonth}
-              selectedDate={selectedDate}
-              onSelectDate={(d) => {
-                setSelectedDate(d);
-                setShowDayErr(false);
-              }}
-              showError={showDayErr}
-              onBack={() => setStep(2)}
-              onReview={reviewFromDay}
-            />
-          )}
+              {step === 3 && (
+                <StepDay
+                  year={bookingYear}
+                  month={bookingMonth}
+                  selectedDate={selectedDate}
+                  onSelectDate={(d) => {
+                    setSelectedDate(d);
+                    setShowDayErr(false);
+                  }}
+                  showError={showDayErr}
+                  onBack={() => setStep(2)}
+                  onReview={reviewFromDay}
+                />
+              )}
 
-          {step === 4 && (
-            <StepConfirm
-              year={bookingYear}
-              month={bookingMonth}
-              details={details}
-              lines={lines}
-              total={total}
-              selectedDate={selectedDate}
-              agree={agree}
-              onAgreeChange={setAgree}
-              showError={showAgreeErr}
-              submitting={submitting}
-              submitError={submitError}
-              onBack={() => setStep(3)}
-              onSubmit={submit}
-            />
-          )}
+              {step === 4 && (
+                <StepConfirm
+                  year={bookingYear}
+                  month={bookingMonth}
+                  details={details}
+                  lines={lines}
+                  total={total}
+                  selectedDate={selectedDate}
+                  agree={agree}
+                  onAgreeChange={setAgree}
+                  showError={showAgreeErr}
+                  submitting={submitting}
+                  submitError={submitError}
+                  onBack={() => setStep(3)}
+                  onSubmit={submit}
+                />
+              )}
 
-          {step === 5 && (
-            <BookingSuccess
-              firstName={firstName}
-              email={details.email}
-              bookingRef={bookingRef}
-              onBackHome={() => router.push("/")}
-            />
-          )}
+              {step === 5 && (
+                <BookingSuccess
+                  firstName={firstName}
+                  email={details.email}
+                  bookingRef={bookingRef}
+                  onBackHome={() => router.push("/")}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 

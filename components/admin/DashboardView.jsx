@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CheckCircle2, DollarSign, Flame, Loader2, Star } from "lucide-react";
 import AdminTopBar from "./AdminTopBar";
 import KpiCard from "./KpiCard";
 import BookingTable from "./BookingTable";
+import Banner from "./Banner";
+import EmptyState from "./EmptyState";
 import { fetchAllBookings } from "@/lib/bookings";
 import { fetchAllReviewsForAdmin } from "@/lib/reviews";
 
@@ -14,12 +17,33 @@ import { fetchAllReviewsForAdmin } from "@/lib/reviews";
 export default function DashboardView() {
   const [bookings, setBookings] = useState([]);
   const [pendingReviews, setPendingReviews] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [banner, setBanner] = useState(null);
 
   useEffect(() => {
-    fetchAllBookings().then(setBookings).catch(() => {});
-    fetchAllReviewsForAdmin()
-      .then((rs) => setPendingReviews(rs.filter((r) => r.status === "pending").length))
-      .catch(() => {});
+    let cancelled = false;
+    setLoading(true);
+    setBanner(null);
+
+    Promise.all([fetchAllBookings(), fetchAllReviewsForAdmin()])
+      .then(([bs, rs]) => {
+        if (cancelled) return;
+        setBookings(bs);
+        setPendingReviews(rs.filter((r) => r.status === "pending").length);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setBanner(
+          "Couldn't reach the server — figures below may be out of date. Check your connection and reload."
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const requested = bookings.filter((b) => b.status === "requested");
@@ -29,6 +53,10 @@ export default function DashboardView() {
     .reduce((sum, b) => sum + (b.total || 0), 0);
   const latest = requested.slice(0, 3);
 
+  // Dashes rather than zeros while loading — a real "0 new requests" and an
+  // unfinished fetch must not look identical.
+  const kpi = (value) => (loading ? "—" : value);
+
   return (
     <div>
       <AdminTopBar
@@ -37,28 +65,34 @@ export default function DashboardView() {
         searchPlaceholder="Search bookings, clients…"
       />
 
+      <Banner type="err" message={banner} onDismiss={() => setBanner(null)} />
+
       <div className="kpi-row">
         <KpiCard
-          label="🔥 New Requests"
-          value={String(requested.length)}
+          icon={Flame}
+          label="New Requests"
+          value={kpi(String(requested.length))}
           delta="Awaiting your response"
           deltaType="up"
         />
         <KpiCard
-          label="✅ Confirmed"
-          value={String(confirmed)}
+          icon={CheckCircle2}
+          label="Confirmed"
+          value={kpi(String(confirmed))}
           delta="Upcoming"
           deltaType="flat"
         />
         <KpiCard
-          label="⭐ Pending Reviews"
-          value={String(pendingReviews)}
+          icon={Star}
+          label="Pending Reviews"
+          value={kpi(String(pendingReviews))}
           delta="Awaiting approval"
           deltaType="up"
         />
         <KpiCard
-          label="💰 Est. Revenue"
-          value={`$${revenue.toLocaleString()}`}
+          icon={DollarSign}
+          label="Est. Revenue"
+          value={kpi(`$${revenue.toLocaleString()}`)}
           delta="confirmed + completed"
           accent
         />
@@ -75,7 +109,16 @@ export default function DashboardView() {
             View all →
           </Link>
         </div>
-        <BookingTable bookings={latest} />
+        {loading ? (
+          <EmptyState
+            icon={Loader2}
+            spin
+            title="Loading your studio…"
+            message="One moment."
+          />
+        ) : (
+          <BookingTable bookings={latest} />
+        )}
       </div>
     </div>
   );

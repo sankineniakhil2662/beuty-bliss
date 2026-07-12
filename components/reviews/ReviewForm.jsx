@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { AlertTriangle, Camera, CheckCircle2, ImageIcon, X } from "lucide-react";
 import StarPicker from "./StarPicker";
 import { submitReview } from "@/lib/reviews";
-
-// Placeholder photo thumbnails (emoji), matching the mockup. Real image upload
-// to Cloud Storage lands with the secure /review/[token] flow (Phase 4).
-const PHOTO_ICONS = ["🧴", "✨", "🧖", "🌸"];
 
 // "Leave a review" form. Submits a real review (status: pending) that appears
 // in the admin Reviews screen for approval. If an `onSubmit` prop is provided
@@ -22,7 +19,7 @@ export default function ReviewForm({ onSubmit }) {
   const [error, setError] = useState(null);
 
   const addPhoto = () =>
-    setPhotos((p) => (p.length >= 4 ? p : [...p, PHOTO_ICONS[p.length % PHOTO_ICONS.length]]));
+    setPhotos((p) => (p.length >= 4 ? p : [...p, "placeholder"]));
   const removePhoto = (i) => setPhotos((p) => p.filter((_, idx) => idx !== i));
 
   const handleSubmit = async () => {
@@ -76,8 +73,8 @@ export default function ReviewForm({ onSubmit }) {
 
       {submitted ? (
         <div className="banner ok" style={{ fontSize: 13 }}>
-          ✓ Thank you! Your review has been submitted and appears once Sruthi
-          approves it.
+          <CheckCircle2 size={16} /> Thank you! Your review has been submitted
+          and appears once Sruthi approves it.
         </div>
       ) : (
         <>
@@ -133,14 +130,16 @@ export default function ReviewForm({ onSubmit }) {
               </span>
             </label>
             <div className="img-upload" onClick={addPhoto}>
-              <div className="iu-ic">📷</div>
+              <div className="iu-ic">
+                <Camera size={26} strokeWidth={1.5} />
+              </div>
               <b>Tap to add before / after photos</b>
               <span>JPG or PNG · up to 4 images</span>
             </div>
             <div className="img-previews">
               {photos.map((p, i) => (
                 <div key={i} className="img-thumb">
-                  {p}
+                  <ImageIcon size={26} strokeWidth={1.5} />
                   <div
                     className="rm"
                     onClick={(e) => {
@@ -148,7 +147,7 @@ export default function ReviewForm({ onSubmit }) {
                       removePhoto(i);
                     }}
                   >
-                    ✕
+                    <X size={12} />
                   </div>
                 </div>
               ))}
@@ -157,7 +156,7 @@ export default function ReviewForm({ onSubmit }) {
 
           {error && (
             <div className="banner err" style={{ fontSize: 12.5 }}>
-              ⚠ {error}
+              <AlertTriangle size={16} /> {error}
             </div>
           )}
 

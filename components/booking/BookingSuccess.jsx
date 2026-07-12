@@ -1,11 +1,15 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
+
 // Step 5: confirmation screen. Ref number is generated client-side for now;
 // the real ref will come from the Firestore write next phase.
 export default function BookingSuccess({ firstName, email, bookingRef, onBackHome }) {
   return (
     <div className="success-box">
-      <div className="circle">✓</div>
+      <div className="circle">
+        <CheckCircle2 size={44} strokeWidth={1.5} />
+      </div>
       <h2>Request received!</h2>
       <p>
         Thank you, <b>{firstName}</b>. Your appointment request has been sent to

@@ -2,6 +2,8 @@ import Link from "next/link";
 import Hero from "@/components/site/Hero";
 import Footer from "@/components/site/Footer";
 import ServiceCard from "@/components/services/ServiceCard";
+import StarRating from "@/components/reviews/StarRating";
+import Reveal from "@/components/site/Reveal";
 import { FEATURED_SERVICES } from "@/lib/services";
 
 export default function Home() {
@@ -13,17 +15,19 @@ export default function Home() {
 
       <div className="wrap">
         <div className="section">
-          <div className="section-head">
+          <Reveal className="section-head">
             <span className="eyebrow">Signature Treatments</span>
             <h2>Loved by our clients</h2>
             <p>
               A few of our most-booked services. Every treatment is customised
               after a quick skin consultation.
             </p>
-          </div>
+          </Reveal>
           <div className="svc-grid">
-            {featured.map((s) => (
-              <ServiceCard key={s.n} service={s} withBook />
+            {featured.map((s, i) => (
+              <Reveal key={s.n} delay={i * 0.1}>
+                <ServiceCard service={s} withBook />
+              </Reveal>
             ))}
           </div>
           <div style={{ textAlign: "center", marginTop: 36 }}>
@@ -42,13 +46,17 @@ export default function Home() {
         <div className="wrap">
           <div className="section">
             <div className="rating-summary">
-              <div>
-                <div className="big" style={{ color: "var(--gold-light)" }}>
-                  4.9
+              <Reveal x={-30} y={0}>
+                <div>
+                  <div className="big" style={{ color: "var(--gold-light)" }}>
+                    4.9
+                  </div>
+                  <div className="rs-stars">
+                    <StarRating rating={5} size={20} />
+                  </div>
                 </div>
-                <div className="rs-stars">★★★★★</div>
-              </div>
-              <div style={{ maxWidth: 340 }}>
+              </Reveal>
+              <Reveal x={30} y={0} delay={0.1} style={{ maxWidth: 340 }}>
                 <h2
                   className="serif"
                   style={{
@@ -71,7 +79,7 @@ export default function Home() {
                 >
                   Read all reviews
                 </Link>
-              </div>
+              </Reveal>
             </div>
           </div>
         </div>

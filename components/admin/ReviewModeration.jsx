@@ -1,6 +1,8 @@
+import { Camera, Check, Star } from "lucide-react";
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
 import ReviewPhoto from "@/components/reviews/ReviewPhoto";
+import StarRating from "@/components/reviews/StarRating";
 
 function formatDate(iso) {
   const d = new Date(iso + "T00:00:00");
@@ -39,7 +41,7 @@ function actionsFor(status) {
 export default function ReviewModeration({ reviews, onAction }) {
   if (!reviews.length) {
     return (
-      <EmptyState icon="⭐" title="No reviews here" message="Try a different filter." />
+      <EmptyState icon={Star} title="No reviews here" message="Try a different filter." />
     );
   }
 
@@ -49,8 +51,7 @@ export default function ReviewModeration({ reviews, onAction }) {
         <div className="modrow" key={r.id}>
           <div>
             <div className="stars">
-              {"★".repeat(r.rating)}
-              {"☆".repeat(5 - r.rating)}
+              <StarRating rating={r.rating} size={14} />
             </div>
             <div className="rtext">&ldquo;{r.text}&rdquo;</div>
             {r.photos && r.photos.length > 0 && (
@@ -64,10 +65,20 @@ export default function ReviewModeration({ reviews, onAction }) {
               <span>
                 <b>{r.name}</b> · {r.service}
               </span>
-              <span className="vchip">✓ Verified {r.ref}</span>
+              <span className="vchip">
+                <Check size={11} /> Verified {r.ref}
+              </span>
               {r.photos && r.photos.length > 0 && (
-                <span style={{ color: "var(--muted)" }}>
-                  📷 {r.photos.length} photo{r.photos.length > 1 ? "s" : ""}
+                <span
+                  style={{
+                    color: "var(--muted)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
+                  <Camera size={13} /> {r.photos.length} photo
+                  {r.photos.length > 1 ? "s" : ""}
                 </span>
               )}
               <StatusPill status={r.status} />

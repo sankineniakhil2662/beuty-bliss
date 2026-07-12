@@ -1,3 +1,4 @@
+import { CalendarClock } from "lucide-react";
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
 
@@ -38,7 +39,7 @@ export default function BookingTable({ bookings, onAction }) {
   if (!bookings.length) {
     return (
       <EmptyState
-        icon="📋"
+        icon={CalendarClock}
         title="No bookings yet"
         message="New requests will show up here."
       />

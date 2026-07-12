@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import { AlertTriangle, CreditCard } from "lucide-react";
 
 // Step 4: review & confirm. Derives display strings from props; the consent
 // checkbox and submit gating are owned by BookingWizard.
@@ -87,7 +88,7 @@ export default function StepConfirm({
       </div>
 
       <div className="pay-note">
-        💳{" "}
+        <CreditCard size={16} style={{ flexShrink: 0 }} />
         <div>
           <b>Payment after service.</b> Nothing is charged now. You&apos;ll pay
           in person once your treatment is complete.
@@ -117,11 +118,16 @@ export default function StepConfirm({
 
       {showError && (
         <div className="banner err">
-          ⚠ Please confirm you understand the follow-up step.
+          <AlertTriangle size={16} /> Please confirm you understand the
+          follow-up step.
         </div>
       )}
 
-      {submitError && <div className="banner err">⚠ {submitError}</div>}
+      {submitError && (
+        <div className="banner err">
+          <AlertTriangle size={16} /> {submitError}
+        </div>
+      )}
 
       <div className="form-actions">
         <button className="btn-prev" onClick={onBack} disabled={submitting}>

@@ -1,3 +1,4 @@
+import { Droplet } from "lucide-react";
 import { ICONS } from "@/lib/constants";
 import StatusPill from "./StatusPill";
 import EmptyState from "./EmptyState";
@@ -7,7 +8,7 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
   if (!services.length) {
     return (
       <EmptyState
-        icon="🧴"
+        icon={Droplet}
         title="No services yet"
         message="Add your first treatment to get started."
       />
@@ -27,11 +28,20 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
         </tr>
       </thead>
       <tbody>
-        {services.map((s) => (
+        {services.map((s) => {
+          const CatIcon = ICONS[s.category];
+          return (
           <tr key={s.id}>
             <td>
               <div className="cust">
-                <div className="av" style={{ borderRadius: 9, overflow: "hidden" }}>
+                <div
+                  className="av"
+                  style={{
+                    borderRadius: 9,
+                    overflow: "hidden",
+                    color: "var(--gold-light)",
+                  }}
+                >
                   {s.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -40,7 +50,7 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   ) : (
-                    ICONS[s.category]
+                    CatIcon && <CatIcon size={18} strokeWidth={1.5} />
                   )}
                 </div>
                 <div>
@@ -77,7 +87,8 @@ export default function ServiceAdminTable({ services, onToggle, onEdit }) {
               </div>
             </td>
           </tr>
-        ))}
+          );
+        })}
       </tbody>
     </table>
     </div>

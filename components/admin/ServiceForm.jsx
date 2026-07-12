@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { AlertTriangle, X } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import { getFirebaseStorage } from "@/lib/firebase";
 
@@ -157,7 +158,9 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
           <div className="img-previews" style={{ marginBottom: 10 }}>
             <div className="img-thumb">
               <Image src={f.imageUrl} alt="" fill style={{ objectFit: "cover" }} sizes="74px" />
-              <div className="rm" onClick={() => set("imageUrl", "")}>✕</div>
+              <div className="rm" onClick={() => set("imageUrl", "")}>
+                <X size={12} />
+              </div>
             </div>
           </div>
         )}
@@ -174,7 +177,11 @@ export default function ServiceForm({ initial, onSave, onCancel, saving }) {
         Visible on the site
       </label>
 
-      {err && <div className="banner err" style={{ fontSize: 12.5 }}>⚠ {err}</div>}
+      {err && (
+        <div className="banner err" style={{ fontSize: 12.5 }}>
+          <AlertTriangle size={16} /> {err}
+        </div>
+      )}
 
       <div className="form-actions">
         <button type="button" className="btn-prev" onClick={onCancel} disabled={saving}>
