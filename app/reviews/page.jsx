@@ -89,14 +89,10 @@ export default function ReviewsPage() {
           <Reveal>
             <RatingSummary />
           </Reveal>
-
-          <Suspense fallback={<ReviewGridSkeleton />}>
-            <ReviewsGrid />
-          </Suspense>
-
           <Reveal
             style={{
               marginTop: 50,
+              marginBottom: 50,
               maxWidth: 560,
               marginLeft: "auto",
               marginRight: "auto",
@@ -104,6 +100,11 @@ export default function ReviewsPage() {
           >
             <ReviewFormModal />
           </Reveal>
+          <Suspense fallback={<ReviewGridSkeleton />}>
+            <ReviewsGrid />
+          </Suspense>
+
+          
         </div>
       </div>
 

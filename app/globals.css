@@ -355,6 +355,9 @@ a{color:inherit;text-decoration:none}
 .consult-toggle.open .chev{transform:rotate(180deg)}
 
 /* review image upload */
+/* The drop zone is a <label> wrapping a hidden file input, so it would inherit
+   the uppercase/letter-spaced `.field label` styling — reset it back. */
+.field label.img-upload{text-transform:none;letter-spacing:normal;font-weight:400;margin-bottom:0}
 .img-upload{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;cursor:pointer;transition:.18s;background:#fdfbf7}
 .img-upload:hover{border-color:var(--gold);background:#fffaf0}
 .img-upload .iu-ic{font-size:30px;margin-bottom:8px;opacity:.7}
