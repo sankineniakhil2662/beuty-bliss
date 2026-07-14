@@ -8,7 +8,10 @@ import { submitReview } from "@/lib/reviews";
 // "Leave a review" form. Submits a real review (status: pending) that appears
 // in the admin Reviews screen for approval. If an `onSubmit` prop is provided
 // (the token flow later), it's used instead of the direct write.
-export default function ReviewForm({ onSubmit }) {
+//
+// `bare` drops the .card wrapper for use inside <Modal>, which already draws
+// the card — nesting them would double the border, padding and shadow.
+export default function ReviewForm({ onSubmit, bare = false, titleId }) {
   const [name, setName] = useState("");
   const [service, setService] = useState("");
   const [rating, setRating] = useState(5);
@@ -50,7 +53,7 @@ export default function ReviewForm({ onSubmit }) {
   };
 
   return (
-    <div className="card card-pad">
+    <div className={bare ? undefined : "card card-pad"}>
       <div
         style={{
           fontSize: 11,
@@ -63,7 +66,7 @@ export default function ReviewForm({ onSubmit }) {
       >
         Completed a treatment?
       </div>
-      <h3 className="serif" style={{ fontSize: 26, marginBottom: 6 }}>
+      <h3 id={titleId} className="serif" style={{ fontSize: 26, marginBottom: 6 }}>
         Leave a review
       </h3>
       <p style={{ fontSize: 13.5, color: "var(--muted)", marginBottom: 20 }}>

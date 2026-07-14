@@ -24,7 +24,7 @@ export default async function Hero() {
         <div className="hero-inner">
         <div>
           <Reveal>
-            <span className="eyebrow">Edmonton • Esthetics Studio</span>
+            <span className="eyebrow">Edmonton • Home Based Esthetics Studio</span>
             <h1>
               Nurse-Led Medical
               <br />

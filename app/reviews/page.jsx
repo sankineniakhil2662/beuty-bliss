@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 import SiteNav from "@/components/site/SiteNav";
 import RatingSummary from "@/components/reviews/RatingSummary";
 import ReviewCard from "@/components/reviews/ReviewCard";
-// import ReviewForm from "@/components/reviews/ReviewForm";
+import ReviewFormModal from "@/components/reviews/ReviewFormModal";
 import Reveal from "@/components/site/Reveal";
 import LoadError from "@/components/site/LoadError";
 import { ReviewGridSkeleton } from "@/components/site/Skeletons";
@@ -102,7 +102,7 @@ export default function ReviewsPage() {
               marginRight: "auto",
             }}
           >
-            {/* <ReviewForm /> */}
+            <ReviewFormModal />
           </Reveal>
         </div>
       </div>
