@@ -67,8 +67,8 @@ a{color:inherit;text-decoration:none}
 /* Header only (the footer/login/review pages keep the small logo + wordmark).
    The nav drops the text, so the mark itself has to carry the brand — bigger,
    and no border-radius, which did nothing for a transparent PNG anyway. */
-.site-nav .brand img{height:76px;border-radius:0}
-.site-nav .site-nav-inner{padding-top:10px;padding-bottom:10px}
+.site-nav .brand img{height:250px;border-radius:0}
+.site-nav .site-nav-inner{padding-top:8px;padding-bottom:8px}
 .site-nav .links{display:flex;gap:30px;align-items:center}
 .site-nav .links a{font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--cream);font-weight:500;transition:.2s}
 .site-nav .links a:hover{color:var(--rose-deep)}
@@ -550,8 +550,8 @@ table.booking tr:hover td{background:#fdfbf6}
     padding:6px 22px 18px;
     z-index:50;
   }
-  /* Smaller on phones — 76px would eat the top of the screen. */
-  .site-nav .brand img{height:56px}
+  /* Much smaller on phones — 250px would swallow a third of the screen. */
+  .site-nav .brand img{height:96px}
   .site-nav .links.open{display:flex}
   .site-nav .links a{padding:14px 0;width:100%;color:var(--ink)}
   .site-nav .links .btn-book{margin-top:8px;text-align:center;justify-content:center}

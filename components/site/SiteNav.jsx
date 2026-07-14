@@ -46,11 +46,14 @@ export default function SiteNav() {
         {/* No wordmark alongside it: the logo art already reads "Beauty Bliss
             by Sruthi". The alt text carries the name for screen readers and SEO. */}
         <div className="brand">
+          {/* Intrinsic size must match how big it actually renders (375x250 at
+              the 250px CSS height, 3:2) — declaring 162x108 made Next serve a
+              small optimized file that looked soft when blown up. */}
           <Image
             src="/images/logo.png"
             alt="Beauty Bliss by Sruthi"
-            width={162}
-            height={108}
+            width={375}
+            height={250}
             priority
           />
         </div>
