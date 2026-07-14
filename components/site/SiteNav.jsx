@@ -44,7 +44,7 @@ export default function SiteNav() {
     <div className="site-nav" ref={navRef}>
       <div className="site-nav-inner">
         <div className="brand">
-          <Image src="/logo.jpeg" alt="Beauty Bliss by Sruthi" width={162} height={108} />
+          <Image src="/images/logo.png" alt="Beauty Bliss by Sruthi" width={162} height={108} />
           <div className="bn">
             <b>Beauty Bliss</b>
             <span>by Sruthi</span>

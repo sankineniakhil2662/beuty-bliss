@@ -83,7 +83,7 @@ export default async function Hero() {
               <HeroCarousel images={carouselImages} />
             ) : (
               <Image
-                src="/logo.jpeg"
+                src="/images/logo.png"
                 alt="Beauty Bliss by Sruthi"
                 width={430}
                 height={287}

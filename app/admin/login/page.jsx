@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
           style={{ marginBottom: 18, justifyContent: "center" }}
         >
           <Image
-            src="/BB.jpeg"
+            src="/images/logo.png"
             alt="Beauty Bliss by Sruthi"
             width={162}
             height={108}

@@ -9,7 +9,7 @@ export default function Footer() {
         <div>
           <div className="brand" style={{ marginBottom: 16 }}>
             <Image
-              src="/BB.jpeg"
+              src="/images/logo.png"
               alt="Beauty Bliss by Sruthi"
               width={162}
               height={108}

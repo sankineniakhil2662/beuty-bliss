@@ -28,7 +28,7 @@ export default function AdminSidebar() {
     <aside className="admin-side">
       <div className="a-brand">
         <Image
-          src="/BB.jpeg"
+          src="/images/logo.png"
           alt=""
           className="logoSlot"
           width={162}
