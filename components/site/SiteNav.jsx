@@ -43,12 +43,16 @@ export default function SiteNav() {
   return (
     <div className="site-nav" ref={navRef}>
       <div className="site-nav-inner">
+        {/* No wordmark alongside it: the logo art already reads "Beauty Bliss
+            by Sruthi". The alt text carries the name for screen readers and SEO. */}
         <div className="brand">
-          <Image src="/images/logo.png" alt="Beauty Bliss by Sruthi" width={162} height={108} />
-          <div className="bn">
-            <b>Beauty Bliss</b>
-            <span>by Sruthi</span>
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="Beauty Bliss by Sruthi"
+            width={162}
+            height={108}
+            priority
+          />
         </div>
 
         <button
