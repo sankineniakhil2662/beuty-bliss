@@ -21,8 +21,8 @@ export default function Footer() {
             </div>
           </div>
           <p style={{ maxWidth: 280 }}>
-            Boutique esthetics studio in Edmonton. Personalised skincare, honest
-            advice, visible results.
+          Boutique Medical Aesthetics Studio in Edmonton
+          Personalized treatments. Expert care. Beautiful, visible results.
           </p>
         </div>
         <div>

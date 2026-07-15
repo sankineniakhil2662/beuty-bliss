@@ -259,6 +259,16 @@ a{color:inherit;text-decoration:none}
 .card-pad{padding:32px}
 
 /* ===== about page ===== */
+/* The studio bio: a single readable column (not the 440px .lead, which turned
+   this much copy into a tall skinny strip), left-aligned in real paragraphs. */
+.about-story{max-width:680px;margin:0 auto;text-align:center}
+.about-story p{text-align:left;color:#5c534b;font-size:16px;line-height:1.85;margin-bottom:18px}
+.about-story p:first-of-type::first-letter{font-family:var(--font-inter),sans-serif;font-size:3.2em;line-height:.8;font-weight:700;float:left;margin:6px 10px 0 0;color:var(--gold)}
+.about-creds{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.about-creds span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;letter-spacing:.3px;color:var(--rose-deep);background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 16px;box-shadow:var(--shadow)}
+.about-quote{margin:34px auto 0;max-width:560px;font-family:var(--font-inter),sans-serif;font-size:22px;line-height:1.5;font-style:italic;color:var(--ink);position:relative;padding-top:28px}
+.about-quote::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:54px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:stretch}
 .about-map{overflow:hidden;min-height:320px}
 .about-map iframe{width:100%;height:100%;min-height:320px;border:0;display:block}
@@ -537,6 +547,8 @@ table.booking tr:hover td{background:#fdfbf6}
   .svc-grid,.rev-grid{grid-template-columns:1fr 1fr}
   .book-shell{grid-template-columns:1fr}
   .about-grid{grid-template-columns:1fr}
+  .about-story p{font-size:15px}
+  .about-quote{font-size:19px}
   .kpi-row{grid-template-columns:1fr 1fr}
   .admin{grid-template-columns:1fr}
   .admin-side{flex-direction:row;align-items:center;flex-wrap:wrap}
