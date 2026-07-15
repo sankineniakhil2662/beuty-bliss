@@ -19,8 +19,20 @@ const LINKS = [
 export default function SiteNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const close = () => setOpen(false);
   const navRef = useRef(null);
+
+  // The full-size logo makes a 318px header — a third of a laptop screen. Since
+  // the bar is sticky, keeping it that tall would cost that space on every
+  // screen of every page, so it condenses once you scroll past the hero and
+  // expands again at the top.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    onScroll(); // a reload partway down the page shouldn't start expanded
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Mobile drawer UX: tapping outside the open menu, or pressing Escape,
   // closes it — same expectation as any native dropdown/drawer.
@@ -41,7 +53,7 @@ export default function SiteNav() {
   }, [open]);
 
   return (
-    <div className="site-nav" ref={navRef}>
+    <div className={"site-nav" + (scrolled ? " scrolled" : "")} ref={navRef}>
       <div className="site-nav-inner">
         {/* No wordmark alongside it: the logo art already reads "Beauty Bliss
             by Sruthi". The alt text carries the name for screen readers and SEO. */}

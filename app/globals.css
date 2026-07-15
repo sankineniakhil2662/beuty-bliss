@@ -23,8 +23,12 @@
   --r:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden}
-body{font-family:var(--font-inter),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream2);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* overflow-x:clip, not hidden. `hidden` makes html/body a scroll container,
+   which silently breaks `position:sticky` on the nav (it scrolls away instead
+   of pinning). `clip` blocks the same horizontal overflow without establishing
+   a scroll container, so the sticky header works. */
+html{scroll-behavior:smooth;overflow-x:clip}
+body{font-family:var(--font-inter),-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream2);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
 .serif{font-family:var(--font-inter),-apple-system,sans-serif;letter-spacing:-0.02em}
 img{max-width:100%;display:block}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
@@ -55,7 +59,9 @@ a{color:inherit;text-decoration:none}
    containing block is the page itself). .site-nav-inner centers the actual
    content within the usual 1180px reading width. */
 .site-nav{position:sticky;top:0;z-index:100;width:100%;background:var(--black);border-bottom:1px solid rgba(201,162,39,.16)}
-.site-nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;max-width:1180px;margin:0 auto}
+/* Stacked + centred: the logo sits in the middle with the nav row beneath it,
+   which is the only way a 250px mark reads as deliberate rather than oversized. */
+.site-nav-inner{display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 22px 14px;max-width:1180px;margin:0 auto;position:relative}
 .brand{display:flex;align-items:center;gap:12px}
 .brand img{height:54px;width:auto;border-radius:8px}
 .brand .bn{font-family:var(--font-inter),sans-serif;line-height:1}
@@ -67,9 +73,13 @@ a{color:inherit;text-decoration:none}
 /* Header only (the footer/login/review pages keep the small logo + wordmark).
    The nav drops the text, so the mark itself has to carry the brand — bigger,
    and no border-radius, which did nothing for a transparent PNG anyway. */
-.site-nav .brand img{height:250px;border-radius:0}
-.site-nav .site-nav-inner{padding-top:8px;padding-bottom:8px}
-.site-nav .links{display:flex;gap:30px;align-items:center}
+.site-nav .brand img{height:250px;border-radius:0;transition:height .3s cubic-bezier(.22,1,.36,1)}
+/* Condensed state, toggled by SiteNav once you scroll past the hero — the
+   250px mark is a first impression, not something worth 35% of every screen. */
+.site-nav.scrolled .brand img{height:78px}
+.site-nav-inner{transition:gap .3s ease,padding .3s ease}
+.site-nav.scrolled .site-nav-inner{gap:6px;padding-top:8px;padding-bottom:10px}
+.site-nav .links{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
 .site-nav .links a{font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--cream);font-weight:500;transition:.2s}
 .site-nav .links a:hover{color:var(--rose-deep)}
 .site-nav .links a.active{color:var(--rose-deep);font-weight:700}
@@ -534,8 +544,10 @@ table.booking tr:hover td{background:#fdfbf6}
   .foot-inner{grid-template-columns:1fr}
 }
 @media(max-width:620px){
-  .site-nav-inner{position:relative}
-  .nav-toggle{display:flex;align-items:center;justify-content:center}
+  .site-nav-inner{position:relative;padding-bottom:8px}
+  /* Pinned to the corner rather than in the column, so it can't shove the
+     centred logo off-centre. */
+  .nav-toggle{display:flex;align-items:center;justify-content:center;position:absolute;top:8px;right:10px;z-index:2}
   .site-nav .links{
     display:none;
     position:absolute;
