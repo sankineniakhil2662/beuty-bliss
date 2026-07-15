@@ -119,7 +119,7 @@ export default function ReviewForm({ onSubmit, bare = false, titleId }) {
         Leave a review
       </h3>
       <p style={{ fontSize: 13.5, color: "var(--muted)", marginBottom: 20 }}>
-        Share your experience — Sruthi checks each review before it appears
+        Share your experience
         publicly.
       </p>
 
