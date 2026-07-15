@@ -17,8 +17,7 @@ export default function ReviewFormModal() {
       <span className="eyebrow">Completed a treatment?</span>
       <h3 className="serif">Tell us how it went</h3>
       <p>
-        Share your experience — Sruthi checks each review before it appears
-        publicly.
+        Share your experience
       </p>
       <button
         ref={triggerRef}
