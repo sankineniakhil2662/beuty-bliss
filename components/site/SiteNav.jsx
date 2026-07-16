@@ -13,33 +13,46 @@ const LINKS = [
   { href: "/about", label: "About" },
 ];
 
-// Nav items are always in the DOM and always visible on desktop — nothing
-// here depends on :hover to be shown. Below 620px they collapse into a
-// toggled dropdown instead of disappearing entirely (see globals.css).
+// One fixed bar that condenses as you scroll. The condense is *scrubbed* to the
+// scroll position via a --nav-progress custom property (0→1), which CSS uses to
+// interpolate the logo scale and the bar height — so it shrinks gradually with
+// the scroll rather than snapping. Because the bar is position:fixed over a
+// constant-height spacer, its height change relayouts only its own handful of
+// nodes (never the page), and the logo shrinks via a GPU transform: smooth 60fps
+// both directions, no reflow, no cross-fade ghosting, and always locked to the
+// top. The scroll listener is rAF-throttled and only writes the property.
 export default function SiteNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const close = () => setOpen(false);
-  const navRef = useRef(null);
+  const rootRef = useRef(null);
 
-  // The full-size logo makes a 318px header — a third of a laptop screen. Since
-  // the bar is sticky, keeping it that tall would cost that space on every
-  // screen of every page, so it condenses once you scroll past the hero and
-  // expands again at the top.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    onScroll(); // a reload partway down the page shouldn't start expanded
+    const root = rootRef.current;
+    if (!root) return;
+    const RANGE = 130; // px of scroll over which it fully condenses
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const p = Math.min(1, Math.max(0, window.scrollY / RANGE));
+      root.style.setProperty("--nav-progress", p);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
-  // Mobile drawer UX: tapping outside the open menu, or pressing Escape,
-  // closes it — same expectation as any native dropdown/drawer.
+  // Mobile drawer UX: tapping outside the open menu, or pressing Escape, closes it.
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) close();
+      if (rootRef.current && !rootRef.current.contains(e.target)) close();
     };
     const onKeyDown = (e) => {
       if (e.key === "Escape") close();
@@ -53,50 +66,50 @@ export default function SiteNav() {
   }, [open]);
 
   return (
-    <div className={"site-nav" + (scrolled ? " scrolled" : "")} ref={navRef}>
-      <div className="site-nav-inner">
-        {/* No wordmark alongside it: the logo art already reads "Beauty Bliss
-            by Sruthi". The alt text carries the name for screen readers and SEO. */}
-        <div className="brand">
-          {/* Intrinsic size must match how big it actually renders (375x250 at
-              the 250px CSS height, 3:2) — declaring 162x108 made Next serve a
-              small optimized file that looked soft when blown up. */}
-          <Image
-            src="/images/logo.png"
-            alt="Beauty Bliss by Sruthi"
-            width={375}
-            height={250}
-            priority
-          />
-        </div>
+    <div ref={rootRef} className="site-nav-root">
+      <div className="site-nav">
+        <div className="site-nav-inner">
+          <div className="brand">
+            <Image
+              src="/images/logo.png"
+              alt="Beauty Bliss by Sruthi"
+              width={375}
+              height={250}
+              priority
+            />
+          </div>
 
-        <button
-          type="button"
-          className="nav-toggle"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
 
-        <div className={"links" + (open ? " open" : "")}>
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              aria-current={pathname === l.href ? "page" : undefined}
-              className={pathname === l.href ? "active" : undefined}
-              onClick={close}
-            >
-              {l.label}
+          <div className={"links" + (open ? " open" : "")}>
+            {LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={pathname === l.href ? "page" : undefined}
+                className={pathname === l.href ? "active" : undefined}
+                onClick={close}
+              >
+                {l.label}
+              </Link>
+            ))}
+            <Link className="btn-book" href="/book" onClick={close}>
+              Book Now
             </Link>
-          ))}
-          <Link className="btn-book" href="/book" onClick={close}>
-            Book Now
-          </Link>
+          </div>
         </div>
       </div>
+      {/* Reserves the (expanded) bar's footprint — the bar is fixed, so it takes
+          no space in flow. */}
+      <div className="site-nav-spacer" aria-hidden="true" />
     </div>
   );
 }

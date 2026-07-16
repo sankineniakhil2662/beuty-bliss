@@ -53,15 +53,23 @@ a{color:inherit;text-decoration:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
 
 /* ===== Public site nav ===== */
-/* Outer bar: full-bleed edge-to-edge black, pinned to the top of the
-   viewport for the whole page (not just within the hero section — it's
-   rendered as a sibling before .hero, not nested inside it, so the sticky
-   containing block is the page itself). .site-nav-inner centers the actual
-   content within the usual 1180px reading width. */
-.site-nav{position:sticky;top:0;z-index:100;width:100%;background:var(--black);border-bottom:1px solid rgba(201,162,39,.16)}
-/* Stacked + centred: the logo sits in the middle with the nav row beneath it,
-   which is the only way a 250px mark reads as deliberate rather than oversized. */
-.site-nav-inner{display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 22px 14px;max-width:1180px;margin:0 auto;position:relative}
+/* One fixed bar (SiteNav.jsx) that condenses as you scroll. It's locked to the
+   top at all times, and a --nav-progress custom property (0→1, written per
+   animation-frame from scrollY) SCRUBS the condense: it interpolates the logo
+   scale and the bar's height, so the header shrinks/grows gradually with the
+   scroll rather than snapping. The bar is position:fixed over a constant spacer,
+   so its height change relayouts only its own handful of nodes — never the page
+   — and the logo scales via a GPU transform, so it's never re-rasterised. Result:
+   smooth 60fps both directions, no reflow, no jump, no cross-fade ghosting. */
+.site-nav-root{position:relative}
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:100;width:100%;background:var(--black);border-bottom:1px solid rgba(201,162,39,.16)}
+/* Stacked + centred: the logo sits in the middle with the nav row beneath it.
+   Gap + padding scrub down alongside the logo so the whole bar tightens. */
+.site-nav-inner{display:flex;flex-direction:column;align-items:center;gap:calc(10px - var(--nav-progress, 0) * 4px);padding:calc(10px - var(--nav-progress, 0) * 2px) 22px calc(14px - var(--nav-progress, 0) * 4px);max-width:1180px;margin:0 auto;position:relative}
+/* Reserves the expanded bar's footprint (the bar is fixed, so it takes no space
+   in flow). Dark, so the strip uncovered as the bar condenses reads as part of
+   the header/hero, never a flash of page background. */
+.site-nav-spacer{background:var(--black);height:326px}
 .brand{display:flex;align-items:center;gap:12px}
 .brand img{height:54px;width:auto;border-radius:8px}
 .brand .bn{font-family:var(--font-inter),sans-serif;line-height:1}
@@ -71,14 +79,12 @@ a{color:inherit;text-decoration:none}
    already cream-overridden backgrounds — only the nav needs this. */
 .site-nav .brand .bn b{color:var(--gold-light)}
 /* Header only (the footer/login/review pages keep the small logo + wordmark).
-   The nav drops the text, so the mark itself has to carry the brand — bigger,
-   and no border-radius, which did nothing for a transparent PNG anyway. */
-.site-nav .brand img{height:250px;border-radius:0;transition:height .3s cubic-bezier(.22,1,.36,1)}
-/* Condensed state, toggled by SiteNav once you scroll past the hero — the
-   250px mark is a first impression, not something worth 35% of every screen. */
-.site-nav.scrolled .brand img{height:78px}
-.site-nav-inner{transition:gap .3s ease,padding .3s ease}
-.site-nav.scrolled .site-nav-inner{gap:6px;padding-top:8px;padding-bottom:10px}
+   The mark carries the brand: 250px at the top, scaling to 78px (scale .312) as
+   you scroll. The box height scrubs in step so the bar genuinely condenses; the
+   image scales via GPU transform, anchored top-centre, so it never re-rasterises
+   or drifts off-centre. */
+.site-nav .brand{height:calc(250px - var(--nav-progress, 0) * 172px);overflow:hidden;align-items:flex-start}
+.site-nav .brand img{height:250px;border-radius:0;transform-origin:top center;transform:scale(calc(1 - var(--nav-progress, 0) * 0.688))}
 .site-nav .links{display:flex;gap:30px;align-items:center;justify-content:center;flex-wrap:wrap}
 .site-nav .links a{font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--cream);font-weight:500;transition:.2s}
 .site-nav .links a:hover{color:var(--rose-deep)}
@@ -188,6 +194,26 @@ a{color:inherit;text-decoration:none}
 .svc-body .price-row .was{font-size:14px;color:#b3a99f;text-decoration:line-through}
 .svc-body .book-mini{margin-top:4px;border:1px solid var(--gold);color:#9a7716;border-radius:999px;padding:8px;font-weight:600;letter-spacing:1px;font-size:12px;text-transform:uppercase;transition:.2s;text-align:center}
 .svc-body .book-mini:hover{background:var(--gold);color:#1a1207}
+/* The card is clickable, so cue it. */
+.svc-card{cursor:pointer}
+.svc-card:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Service details popup — rendered inside the shared Modal shell
+   (.review-modal), so it inherits the pop-in/out animation, scroll lock, focus
+   handling and click-outside/Escape close. The image bleeds to the modal edges;
+   the body reuses the card's meta/price styling. */
+.svc-modal-thumb{margin:-28px -28px 0;position:relative;aspect-ratio:16/10;background:linear-gradient(135deg,#2a2320,#0E0B0A);display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px 16px 0 0}
+.svc-modal-thumb .ic{color:var(--gold-light);opacity:.92;display:flex}
+.svc-modal-thumb .deal{position:absolute;top:14px;left:14px;background:var(--rose-deep);color:#fff;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 11px;border-radius:999px;font-weight:600}
+.svc-modal-body{padding-top:20px;display:flex;flex-direction:column;gap:10px}
+.svc-modal-body h3{font-family:var(--font-inter),sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);line-height:1.15}
+.svc-modal-body .meta{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);letter-spacing:.5px}
+.svc-modal-body .meta .dot{width:3px;height:3px;border-radius:50%;background:var(--rose)}
+.svc-modal-desc{font-size:15px;line-height:1.65;color:#5c534b;white-space:pre-line}
+.svc-modal-body .price-row{display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.svc-modal-body .price-row .now{font-family:var(--font-inter),sans-serif;font-size:26px;font-weight:700;color:var(--rose-deep)}
+.svc-modal-body .price-row .was{font-size:15px;color:#b3a99f;text-decoration:line-through}
+.svc-modal-book{margin-top:8px;width:100%;text-align:center}
 
 /* category filter */
 .filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
@@ -229,11 +255,32 @@ a{color:inherit;text-decoration:none}
 
 .review-modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(14,11,10,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:24px;animation:revModalFadeIn .2s ease}
 .review-modal-overlay.closing{animation:revModalFadeOut .18s ease forwards}
-.review-modal{position:relative;background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid #efe6d8;padding:28px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;animation:revModalPopIn .22s cubic-bezier(.22,1,.36,1)}
+/* The box itself doesn't scroll — .review-modal-scroll does — so the close
+   button (absolute on the box) stays pinned in the corner while content scrolls. */
+.review-modal{position:relative;display:flex;flex-direction:column;background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);border:1px solid #efe6d8;max-width:440px;width:100%;max-height:85vh;overflow:hidden;animation:revModalPopIn .22s cubic-bezier(.22,1,.36,1)}
 .review-modal-overlay.closing .review-modal{animation:revModalPopOut .18s ease forwards}
 .review-modal:focus{outline:none}
-.review-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--cream2);transition:.18s}
-.review-modal-close:hover{color:var(--ink);background:var(--line)}
+.review-modal-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:28px}
+/* Premium circular close: always visible (pinned to the non-scrolling box),
+   44x44 touch target, subtle shadow, lift on hover, springy scale on tap. */
+.review-modal-close{position:absolute;top:14px;right:14px;z-index:5;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);background:#fff;box-shadow:0 4px 14px rgba(20,12,8,.20);transition:transform .18s cubic-bezier(.22,1,.36,1),color .18s ease,box-shadow .18s ease,opacity .2s ease}
+.review-modal-close:hover{color:var(--rose-deep);box-shadow:0 7px 20px rgba(20,12,8,.26);transform:translateY(-1px)}
+.review-modal-close:active{transform:scale(.9)}
+/* On the service popup the button overlays the photo, so it's glassmorphism
+   instead of a solid chip: a small (34px visual, 44px touch) frosted disc that
+   blends into the image and keeps it the hero. Idle ~55% opacity, rising to full
+   on hover/focus. The 44x44 button stays transparent (the ::before draws the
+   frosted disc) so the tap target is preserved. Scoped to this variant because
+   the reviews modal's button sits on white content, where glass would vanish. */
+.review-modal--on-image .review-modal-close{background:transparent;box-shadow:none;color:#fff;opacity:.55}
+.review-modal--on-image .review-modal-close::before{content:"";position:absolute;inset:5px;border-radius:50%;background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(8px) saturate(1.2);backdrop-filter:blur(8px) saturate(1.2);box-shadow:0 2px 10px rgba(0,0,0,.16);transition:background .2s ease}
+/* Full-white stroke plus a soft double drop-shadow — a faint dark halo lifts it
+   off light images, a faint light halo off dark ones — so the ✕ reads on any
+   photo without turning bold or outlined. */
+.review-modal--on-image .review-modal-close svg{position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5)) drop-shadow(0 0 1px rgba(0,0,0,.35))}
+.review-modal--on-image .review-modal-close:hover,.review-modal--on-image .review-modal-close:focus-visible{opacity:1;color:#fff;box-shadow:none;transform:none}
+.review-modal--on-image .review-modal-close:hover::before,.review-modal--on-image .review-modal-close:focus-visible::before{background:rgba(255,255,255,.3)}
+.review-modal--on-image .review-modal-close:active{transform:scale(.92)}
 .review-modal .stars{color:var(--gold);letter-spacing:3px;font-size:18px;margin-bottom:14px}
 .review-modal-text{font-family:var(--font-inter),sans-serif;font-size:16px;line-height:1.6;color:var(--ink);margin-bottom:18px}
 .review-modal-photos{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
@@ -574,8 +621,11 @@ table.booking tr:hover td{background:#fdfbf6}
     padding:6px 22px 18px;
     z-index:50;
   }
-  /* Much smaller on phones — 250px would swallow a third of the screen. */
-  .site-nav .brand img{height:96px}
+  /* Much smaller on phones — 250px would swallow a third of the screen. Scrubs
+     96px → 78px (scale .8125), and the spacer matches the expanded 96px bar. */
+  .site-nav .brand{height:calc(96px - var(--nav-progress, 0) * 18px)}
+  .site-nav .brand img{height:96px;transform:scale(calc(1 - var(--nav-progress, 0) * 0.1875))}
+  .site-nav-spacer{height:115px}
   .site-nav .links.open{display:flex}
   .site-nav .links a{padding:14px 0;width:100%;color:var(--ink)}
   .site-nav .links .btn-book{margin-top:8px;text-align:center;justify-content:center}
@@ -607,8 +657,12 @@ table.booking tr:hover td{background:#fdfbf6}
   .form-step-bar .stp .n{width:28px;height:28px;font-size:12.5px;margin-bottom:6px}
   .form-step-bar .stp span{font-size:8.5px;letter-spacing:.2px;white-space:nowrap}
   .form-step-bar .stp::after{top:14px}
-  .review-modal{padding:24px;max-height:90vh}
+  .review-modal{max-height:90vh}
+  .review-modal-scroll{padding:24px}
   .review-modal-overlay{padding:14px}
+  /* Match the tighter modal padding so the image still bleeds to the edges. */
+  .svc-modal-thumb{margin:-24px -24px 0}
+  .svc-modal-body h3{font-size:21px}
   .daygrid{gap:5px}
   .modrow{grid-template-columns:1fr}
   .field input,.field select,.field textarea{font-size:16px}
