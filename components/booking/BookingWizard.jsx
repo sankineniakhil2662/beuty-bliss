@@ -9,6 +9,7 @@ import StepDay from "./StepDay";
 import StepConfirm from "./StepConfirm";
 import BookingSuccess from "./BookingSuccess";
 import CartSummary from "./CartSummary";
+import { makeRef } from "@/lib/bookings";
 
 const STEPS = [
   { n: 1, label: "Services" },
@@ -18,6 +19,23 @@ const STEPS = [
 ];
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+const WHATSAPP_NUMBER = "919396566999";
+
+// Plain "Ref / Name / Phone / ..." lines — kept in one place so the WhatsApp
+// text always matches what the success screen shows.
+function buildWhatsAppMessage({ ref, name, phone, treatments, dayLabel, notes }) {
+  return [
+    "Beauty Bliss by Sruthi — New Booking Request",
+    "",
+    `Ref: ${ref}`,
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Treatment(s): ${treatments}`,
+    `Preferred Day: ${dayLabel}`,
+    `Notes: ${notes || "-"}`,
+  ].join("\n");
+}
 
 const INITIAL_CONSULT = {
   concerns: [],
@@ -180,45 +198,74 @@ export default function BookingWizard({ services, preselectService }) {
     setStep(4);
   };
 
-  const submit = async () => {
+  const submit = () => {
     if (!agree) {
       setShowAgreeErr(true);
       return;
     }
     setShowAgreeErr(false);
     setSubmitError(null);
+
+    const preferredDate = `${bookingYear}-${String(bookingMonth + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
+    const dayLabel = new Date(bookingYear, bookingMonth, selectedDate).toLocaleDateString(
+      "en-GB",
+      { weekday: "long", day: "numeric", month: "long", year: "numeric" }
+    );
+
+    // Locked in before anything async so the same ref shows on the success
+    // screen and in the WhatsApp message below, and so the background save
+    // can hand Firestore this exact ref instead of minting its own.
+    const ref = makeRef(bookingYear);
+    setBookingRef(ref);
+    setStep(5);
+
+    const message = buildWhatsAppMessage({
+      ref,
+      name: details.name,
+      phone: details.phone,
+      treatments: lines
+        .map((l) => `${l.name}${l.qty > 1 ? ` x${l.qty}` : ""}`)
+        .join(", "),
+      dayLabel,
+      notes: consultation.goals.trim(),
+    });
+    // window.open must run synchronously in this click handler, before any
+    // await — once we cross an async gap, mobile pop-up blockers drop it.
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+
+    // Best-effort background save — the WhatsApp message is already the
+    // customer's actual confirmation, so a failure here never throws.
     setSubmitting(true);
-    try {
-      const preferredDate = `${bookingYear}-${String(bookingMonth + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
-      const res = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          services: lines.map((l) => ({
-            name: l.name,
-            price: l.price,
-            qty: l.qty,
-          })),
-          total,
-          details,
-          consultation,
-          preferredDate,
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Request failed");
-      }
-      const { ref } = await res.json();
-      setBookingRef(ref);
-      setStep(5);
-    } catch (err) {
-      setSubmitError(
-        err.message || "Something went wrong. Please try again."
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ref,
+        services: lines.map((l) => ({
+          name: l.name,
+          price: l.price,
+          qty: l.qty,
+        })),
+        total,
+        details,
+        consultation,
+        preferredDate,
+      }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Request failed");
+        }
+      })
+      .catch((err) => {
+        console.error("Booking save failed:", err);
+        setSubmitError(err.message || "Something went wrong saving your booking.");
+      })
+      .finally(() => setSubmitting(false));
   };
 
   const firstName = details.name.trim().split(" ")[0] || "there";

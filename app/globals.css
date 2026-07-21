@@ -682,6 +682,12 @@ table.booking tr:hover td{background:#fdfbf6}
   .hero-carousel .hc-badge b{font-size:11px}
   .hero-carousel .hc-badge small{display:none}
   .hero-carousel .hc-dots{margin-top:16px}
+  /* 34px h2 + the dashed ref pill were sized for desktop; scale both down so
+     neither wraps awkwardly on a narrow phone. */
+  .success-box{padding:24px 6px}
+  .success-box h2{font-size:26px}
+  .success-box .ref{padding:10px 16px;word-break:break-word}
+  .next-steps{padding:18px}
 }
 
 /* ===== skeleton loaders (route loading.jsx fallbacks) ===== */

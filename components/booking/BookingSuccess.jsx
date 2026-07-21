@@ -2,8 +2,9 @@
 
 import { CheckCircle2 } from "lucide-react";
 
-// Step 5: confirmation screen. Ref number is generated client-side for now;
-// the real ref will come from the Firestore write next phase.
+// Step 5: confirmation screen. `bookingRef` is minted client-side in
+// BookingWizard's submit handler (before the WhatsApp redirect), then reused
+// as-is for the background Firestore write — this screen never waits on it.
 export default function BookingSuccess({ firstName, bookingRef, onBackHome,phone }) {
   return (
     <div className="success-box">
