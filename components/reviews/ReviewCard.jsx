@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import ReviewPhoto from "./ReviewPhoto";
 import StarRating from "./StarRating";
 import ReviewModal from "./ReviewModal";
+import { formatReviewDate } from "@/lib/reviews";
 
 // A single public review card. `review` uses the mockup aliases: nm, svc, r, t,
 // photos (optional), date (optional). The review text is CSS-clamped to a
@@ -17,6 +18,10 @@ export default function ReviewCard({ review: r }) {
   const triggerRef = useRef(null);
   const [truncated, setTruncated] = useState(false);
   const [open, setOpen] = useState(false);
+  // Short form (e.g. "Jun 15, 2019") to stay compact in the 3-up grid; the
+  // expanded ReviewModal shows the same date in full via formatReviewDate's
+  // default options.
+  const formattedDate = formatReviewDate(r.date, { month: "short" });
 
   useEffect(() => {
     const el = textRef.current;
@@ -63,6 +68,7 @@ export default function ReviewCard({ review: r }) {
           <span>{r.svc}</span>
         </div>
       </div>
+      {formattedDate && <div className="review-modal-date">{formattedDate}</div>}
 
       {open && (
         <ReviewModal

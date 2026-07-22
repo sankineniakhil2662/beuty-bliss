@@ -6,6 +6,10 @@ import { AlertTriangle, Camera, CheckCircle2, X } from "lucide-react";
 import StarPicker from "./StarPicker";
 import { submitReview } from "@/lib/reviews";
 import { getFirebaseStorage } from "@/lib/firebase";
+// TEMP — Facebook review migration only. Remove this import together with
+// every other block in this file marked "TEMP" once migration is done; see
+// TempReviewDatePicker.jsx for the full removal note.
+import TempReviewDatePicker from "./TempReviewDatePicker";
 
 const MAX_PHOTOS = 4;
 // Matches the 5MB ceiling in storage.rules — checked here too so an oversized
@@ -27,6 +31,10 @@ export default function ReviewForm({ onSubmit, bare = false, titleId }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  // TEMP — migration only; remove alongside the field block below and the
+  // `reviewDate` handling in handleSubmit/submitReview.
+  const [reviewDate, setReviewDate] = useState(null);
+  const [dateError, setDateError] = useState(null);
 
   // Previews are derived from `files` rather than held as separate state, so
   // they can't drift out of sync; the cleanup revokes them so they don't leak.
@@ -63,6 +71,16 @@ export default function ReviewForm({ onSubmit, bare = false, titleId }) {
       setError("Please write a short review.");
       return;
     }
+    // TEMP — migration-only validation; remove with the rest of this block.
+    if (reviewDate) {
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+      if (reviewDate > endOfToday) {
+        setDateError("Review date can't be in the future.");
+        return;
+      }
+    }
+    setDateError(null);
     setError(null);
     setSubmitting(true);
 
@@ -88,6 +106,10 @@ export default function ReviewForm({ onSubmit, bare = false, titleId }) {
       }
 
       const review = { name, service, rating, text, photos };
+      // TEMP — attach the backfilled date only when the admin picked one;
+      // ordinary public submissions leave this undefined and behave exactly
+      // as before. Remove alongside the rest of this migration feature.
+      if (reviewDate) review.reviewDate = reviewDate;
       if (onSubmit) {
         onSubmit(review);
       } else {
@@ -149,6 +171,36 @@ export default function ReviewForm({ onSubmit, bare = false, titleId }) {
               onChange={(e) => setService(e.target.value)}
             />
           </div>
+
+          {/* ===== TEMP: Facebook review migration date field =====
+              Backfills the original review date when importing older
+              Facebook reviews. Safe to delete this whole block — plus the
+              `reviewDate`/`dateError` state, the validation in
+              handleSubmit, the `reviewDate` attached to `review` above, the
+              TempReviewDatePicker import, and the matching TEMP block in
+              lib/reviews.js — once migration is complete. */}
+          <div className={"field" + (dateError ? " error" : "")}>
+            <label>
+              Review date{" "}
+              <span
+                style={{
+                  color: "var(--muted)",
+                  fontWeight: 400,
+                  textTransform: "none",
+                  letterSpacing: 0,
+                }}
+              >
+                (optional — for importing older reviews)
+              </span>
+            </label>
+            <TempReviewDatePicker value={reviewDate} onChange={setReviewDate} />
+            {dateError && (
+              <p className="hint" style={{ color: "var(--err)" }}>
+                {dateError}
+              </p>
+            )}
+          </div>
+          {/* ===== END TEMP block ===== */}
 
           <div className="field">
             <label>Your rating</label>

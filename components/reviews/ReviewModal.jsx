@@ -3,18 +3,13 @@
 import Modal from "@/components/site/Modal";
 import ReviewPhoto from "./ReviewPhoto";
 import StarRating from "./StarRating";
+import { formatReviewDate } from "@/lib/reviews";
 
 // Full-review popup opened from a card's "Read More". Only mounted while open
 // (see ReviewCard) so it costs nothing when closed. The portal, Escape/
 // click-outside handling, scroll lock and focus return all live in <Modal>.
 export default function ReviewModal({ review: r, onClose, returnFocusRef }) {
-  const formattedDate = r.date
-    ? new Date(r.date).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
+  const formattedDate = formatReviewDate(r.date);
 
   return (
     <Modal

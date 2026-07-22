@@ -237,6 +237,7 @@ a{color:inherit;text-decoration:none}
 .rev-card .read-more:hover{color:var(--gold)}
 .rev-card .rphotos{flex-shrink:0}
 .rev-card .who{display:flex;align-items:center;gap:10px;margin-top:auto;flex-shrink:0}
+.rev-card .review-modal-date{flex-shrink:0}
 /* Shared with .review-modal so the customer avatar/name/service look
    identical in the card and in the "Read More" popup. */
 .rev-card .av,.review-modal .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-family:var(--font-inter),sans-serif;font-size:14px;flex-shrink:0}
@@ -350,6 +351,27 @@ a{color:inherit;text-decoration:none}
 .daygrid .day.off{color:#cabfb3;background:#f6f1e9;cursor:not-allowed;text-decoration:line-through}
 .daygrid .day.sel{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1207;border-color:var(--gold);font-weight:600;box-shadow:0 6px 16px rgba(201,162,39,.4)}
 .daygrid .day.today{border-color:var(--rose-deep)}
+
+/* ===== TEMP: Facebook review migration date picker (TempReviewDatePicker.jsx)
+   Remove this whole block when the component is removed after migration. ===== */
+.temp-date-field{position:relative}
+.temp-date-trigger{display:flex;align-items:center;gap:10px;width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:inherit;font-size:14.5px;color:var(--ink);background:#fdfbf7;transition:.2s;text-align:left;cursor:pointer}
+.temp-date-trigger:hover{border-color:var(--rose)}
+.temp-date-trigger.open,.temp-date-trigger:focus-visible{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 4px rgba(201,162,39,.12)}
+.temp-date-trigger svg{color:var(--muted);flex-shrink:0}
+.temp-date-placeholder{color:var(--muted)}
+.temp-date-pop{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:20;background:#fff;border:1px solid #efe6d8;border-radius:16px;box-shadow:var(--shadow-lg);padding:16px;animation:revModalPopIn .18s cubic-bezier(.22,1,.36,1)}
+.temp-date-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.temp-date-arrow{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;border:1.5px solid var(--line);color:var(--ink);flex-shrink:0;transition:.18s;background:#fff}
+.temp-date-arrow:hover:not(:disabled){border-color:var(--ink)}
+.temp-date-arrow:disabled{color:#d8cdc0;border-color:#ece5db;cursor:not-allowed}
+.temp-date-selects{display:flex;gap:6px;flex:1;min-width:0}
+.temp-date-selects select{flex:1;min-width:0;padding:7px 8px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:13px;color:var(--ink);background:#fdfbf7}
+.temp-date-selects select:focus{outline:none;border-color:var(--gold)}
+@media(max-width:620px){
+  .temp-date-selects select{font-size:16px}
+}
+/* ===== END TEMP block ===== */
 
 .summary-side .ss-svc{display:flex;gap:14px;align-items:center;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
 .summary-side .ss-svc .ic{width:58px;height:58px;border-radius:12px;background:linear-gradient(135deg,#2a2320,#0E0B0A);display:flex;align-items:center;justify-content:center;font-size:26px}
