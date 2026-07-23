@@ -29,8 +29,8 @@ export default function Loading() {
             Services &amp; <em>Pricing</em>
           </h1>
           <p className="lead" style={{ margin: "18px auto 0" }}>
-            All prices in CAD. Pay in person after your treatment — no online
-            payment needed.
+          All prices are in CAD. 
+          In person payment only.
           </p>
         </div>
       </div>

@@ -29,14 +29,6 @@ export default function BookingSuccess({ firstName, bookingRef, onBackHome,phone
           </div>
         </div>
         <div className="ns">
-          <div className="num">2</div>
-          <div>
-            <b>Check your inbox</b>A confirmation SMS is on its way to{" "}
-            <span>{phone}</span>.
-
-          </div>
-        </div>
-        <div className="ns">
           <div className="num">3</div>
           <div>
             <b>Pay after your visit</b>No payment now — settle in person once your
